@@ -3,112 +3,147 @@ package ru.tilacyn.hashTable;
 import ru.tilacyn.list.*;
 
 /**
- * Хеш-таблица на списках с закрытой адресацией
- * Перехеширование не реализовано, так как не требовалось в задании
+ * РҐРµС€-С‚Р°Р±Р»РёС†Р° РЅР° СЃРїРёСЃРєР°С… СЃ Р·Р°РєСЂС‹С‚РѕР№ Р°РґСЂРµСЃР°С†РёРµР№
+ * РџРµСЂРµС…РµС€РёСЂРѕРІР°РЅРёРµ РЅРµ СЂРµР°Р»РёР·РѕРІР°РЅРѕ, С‚Р°Рє РєР°Рє РЅРµ С‚СЂРµР±РѕРІР°Р»РѕСЃСЊ РІ Р·Р°РґР°РЅРёРё
  * @author tilac
  *
  */
 
 public class HashTable {
-	
-	/**
-	 * массив списков
-	 */
-	
-	private List[] arr;
-	
-	/**
-	 * количество ключей в таблице
-	 */
-	
-	private int size;
-	
-	/**
-	 * Конструктор, который создает массив размера 1000
-	 */
-	
-	public HashTable(){
-		size = 0;
-		arr = new List[1000];
-		for(int i = 0; i < 1000; i++) {
-			arr[i] = new List();
-		}
-	}
-	
-	/**
-	 * Количество различных ключей
-	 * @return size
-	 */
-	
-	public int size() {
-		return size;
-	}
-	
-	/**
-	 * Удаляет пару ключ, значение из таблицы
-	 * @param key - ключ
-	 * @return значение по ключу или null, если ключ не найден
-	 */
-	
-	public String remove(String key) {
-		int i = key.hashCode() % arr.length;
-		size--;
-		return arr[i].remove(key);
-	}
-	
-	/**
-	 * Проверка на присутствие ключа в таблице
-	 * @param key - ключ
-	 * @return true, если есть такой, false - иначе
-	 */
-	
-	public boolean contains(String key) {
-		int i = key.hashCode() % arr.length;
-		return arr[i].contains(key);
-	}
-	
-	/**
-	 * Значение по ключу
-	 * @param key - ключ
-	 * @return значение или null, если ключ не найден
-	 */
-	
-	public String get(String key) {
-		int i = key.hashCode() % arr.length;
-		return arr[i].get(key);
-	}
-	
-	/**
-	 * Кладет в хеш-таблицу новую пару ключ, значение
-	 * @param key - ключ
-	 * @param s - значение
-	 * @return значение, если этот ключ присутствовал в хеш-табоице или null иначе
-	 */
-	
-	public String put(String key, String s) {
-		int i = key.hashCode() % arr.length;
-		String res = null;
-		if(contains(key)) {
-			res = remove(key);
-		}
-		arr[i].add(key, s);
-		size++;
-		return res;
-	}
-	
-	/**
-	 * Очищает хеш-таблицу, фактически копия конструктора
-	 */
-	
-	public void clear() {
-		size = 0;
-		arr = new List[1000];
-		for(int i = 0; i < 1000; i++) {
-			arr[i] = new List();
-		}
-	}
 
-	
-	
-	
+    /**
+     * РјР°СЃСЃРёРІ СЃРїРёСЃРєРѕРІ
+     */
+
+    private List[] data;
+
+    /**
+     * РєРѕР»РёС‡РµСЃС‚РІРѕ РєР»СЋС‡РµР№ РІ С‚Р°Р±Р»РёС†Рµ
+     */
+
+    private int size = 0;
+
+    /**
+     * РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
+     * @param n - СЂР°Р·РјРµСЂ РјР°СЃСЃРёРІР°
+     */
+
+    public HashTable(int n){
+        data = new List[n];
+        for(int i = 0; i < n; i++) {
+            data[i] = new List();
+        }
+    }
+
+    /**
+     * РҐРµС€РёСЂСѓРµС‚ СЃС‚СЂРѕРєСѓ
+     * @param s - СЃС‚СЂРѕРєР°
+     * @return С…РµС€-РєРѕРґ С‚РёРїР° int
+     */
+
+    public int getHash(String s){
+        return s.hashCode() % data.length;
+    }
+
+    /**
+     * РљРѕР»РёС‡РµСЃС‚РІРѕ СЂР°Р·Р»РёС‡РЅС‹С… РєР»СЋС‡РµР№
+     * @return size
+     */
+
+    public int size() {
+        return size;
+    }
+
+    /**
+     * РЈРґР°Р»СЏРµС‚ РїР°СЂСѓ РєР»СЋС‡, Р·РЅР°С‡РµРЅРёРµ РёР· С‚Р°Р±Р»РёС†С‹
+     * @param key - РєР»СЋС‡
+     * @return Р·РЅР°С‡РµРЅРёРµ РїРѕ РєР»СЋС‡Сѓ РёР»Рё null, РµСЃР»Рё РєР»СЋС‡ РЅРµ РЅР°Р№РґРµРЅ
+     */
+
+    public String remove(String key) {
+        int i = getHash(key);
+        size--;
+        return data[i].remove(key);
+    }
+
+    /**
+     * РџСЂРѕРІРµСЂРєР° РЅР° РїСЂРёСЃСѓС‚СЃС‚РІРёРµ РєР»СЋС‡Р° РІ С‚Р°Р±Р»РёС†Рµ
+     * @param key - РєР»СЋС‡
+     * @return true, РµСЃР»Рё РµСЃС‚СЊ С‚Р°РєРѕР№, false - РёРЅР°С‡Рµ
+     */
+
+    public boolean contains(String key) {
+        int i = getHash(key);
+        return data[i].contains(key);
+    }
+
+    /**
+     * Р—РЅР°С‡РµРЅРёРµ РїРѕ РєР»СЋС‡Сѓ
+     * @param key - РєР»СЋС‡
+     * @return Р·РЅР°С‡РµРЅРёРµ РёР»Рё null, РµСЃР»Рё РєР»СЋС‡ РЅРµ РЅР°Р№РґРµРЅ
+     */
+
+    public String get(String key) {
+        int i = getHash(key);
+        return data[i].get(key);
+    }
+
+    /**
+     * РєР»Р°РґРµС‚ РІ С…РµС€-С‚Р°Р±Р»РёС†Сѓ РЅРѕРІСѓСЋ РїР°СЂСѓ РєР»СЋС‡, Р·РЅР°С‡РµРЅРёРµ
+     * РµСЃР»Рё СЂР°Р·РјРµСЂ Р±РѕР»РµРµ, С‡РµРј РІ РґРІР° СЂР°Р·Р° РїСЂРµРІС‹С€Р°РµС‚ СЂР°Р·РјРµСЂ РјР°СЃСЃРёРІР° data, РІС‹Р·С‹РІР°РµС‚СЃСЏ РјРµС‚РѕРґ rebuild
+     * @param key - РєР»СЋС‡
+     * @param s - Р·РЅР°С‡РµРЅРёРµ
+     * @return Р·РЅР°С‡РµРЅРёРµ, РµСЃР»Рё СЌС‚РѕС‚ РєР»СЋС‡ РїСЂРёСЃСѓС‚СЃС‚РІРѕРІР°Р» РІ С…РµС€-С‚Р°Р±РѕРёС†Рµ РёР»Рё null РёРЅР°С‡Рµ
+     */
+
+    public String put(String key, String s) {
+        if(size > 2 * data.length) {
+            rebuild();
+        }
+        int i = getHash(key);
+        String res = null;
+        if(contains(key)) {
+            res = remove(key);
+        }
+        data[i].add(key, s);
+        size++;
+        return res;
+    }
+
+    /**
+     * РћС‡РёС‰Р°РµС‚ С…РµС€-С‚Р°Р±Р»РёС†Сѓ, С„Р°РєС‚РёС‡РµСЃРєРё РєРѕРїРёСЏ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°
+     */
+
+    public void clear() {
+        size = 0;
+        int n = data.length;
+        data = new List[n];
+        for(int i = 0; i < n; i++) {
+            data[i] = new List();
+        }
+    }
+
+    /**
+     * rebuilds our HashTable
+     * it increases size of data array twice
+     * and copies all data to a new List array
+     * rehashing is being done since now our hash-function has changed
+     */
+
+    public void rebuild() {
+        int n = data.length;
+        List[] oldData = data.clone();
+        data = new List[2 * n];
+        for(int i = 0; i < 2 * n; i++) {
+            data[i] = new List();
+        }
+
+        for(int i = 0; i < n; i++) {
+            while(oldData[i].head != null) {
+                put(oldData[i].head.key, oldData[i].head.s);
+                oldData[i].remove(oldData[i].head.key);
+            }
+        }
+    }
 }
+
