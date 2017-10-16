@@ -1,101 +1,124 @@
 package ru.tilacyn.list;
 
+
+
 /**
- * Двусвязный список List для HashTable(коллизии устраняются методом цепочек)
+ * Р”РІСѓСЃРІСЏР·РЅС‹Р№ СЃРїРёСЃРѕРє List (РІ СЂРµР°Р»РёР·Р°С†РёРё HashTable РєРѕР»Р»РёР·РёРё СѓСЃС‚СЂР°РЅСЏСЋС‚СЃСЏ РјРµС‚РѕРґРѕРј С†РµРїРѕС‡РµРє)
+ *
  * @author tilac
  *
  */
 
 public class List {
-	
-	/**
-	 * Голова списка, хвост не храним
-	 */
-	
-	public Node head;
-	
-	public List() {
-		head = null;
-	}
-	
-	
-	/**
-	 * Добавляет Node с ключом и значением
-	 * @param key - ключ
-	 * @param s - значение 
-	 */
-	
-	public void add(String key, String s) {
-		Node node = new Node(key, s);
-		if(head == null) head = node;
-		else {
-			node.next = head;
-			head = node;
-		}
-	}
-	
-	/**
-	 * Проверка на присутствие данного ключа в списке
-	 * Работает за линию, как поиск в обычном двусвязном списке
-	 * Этот же перебор применяется в последующий методах
-	 * @param key - ключ
-	 * @return true, если есть такой, и false иначе
-	 */
-	
-	public boolean contains(String key) {
-		Node cur = head;
-		while(cur != null) {
-			if(cur.key.equals(key)) return true;
-			cur = cur.next;
-		}
-		return false;
-	}
-	
-	/**
-	 * Удаление ключа и значения: происходит, как в обычном двусвязном списке
-	 * @param key - ключ
-	 * @return значение по ключу или null, если такого ключа нет
-	 */
-	
-	public String remove(String key) {
-		Node cur = head;
-		while(cur != null) {
-			if(cur.key.equals(key)) {
-				if(cur.equals(head)) {
-					if(cur.next == null) {
-						head = null;
-					} else {
-						head = cur.next;
-						head.prev = null;
-					}
-				} else {
-					if(cur.next == null) {
-						cur.prev.next = null;
-					} else {
-						cur.prev.next = cur.next;
-						cur.next.prev = cur.prev;
-					}
-				}
-				return cur.s;
-			}
-			cur = cur.next;
-		}
-		return null;
-	}
-	
-	/**
-	 * Возвращает значение по ключу, не меняя список
-	 * @param key - ключ
-	 * @return значение, если ключ найден или null, если ключа нет
-	 */
-	
-	public String get(String key) {
-		Node cur = head;
-		while(cur != null) {
-			if(cur.key.equals(key)) return cur.s;
-			cur = cur.next;
-		}
-		return null;
-	}
-	
+    
+    /**
+     * РљР»Р°СЃСЃ Node: РІСЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Р№ РєР»Р°СЃСЃ РґР»СЏ List
+     * РҐСЂР°РЅРёС‚ РїР°СЂСѓ: {key, s}
+     * @author tilac
+     *
+     */
+
+    public class Node {
+        public String s, key;
+        public Node next, prev;
+        Node(String key, String s) {
+            next = prev = null;
+            this.s = s;
+            this.key = key;
+        }
+    }
+
+    /**
+     * Р“РѕР»РѕРІР° СЃРїРёСЃРєР°, С…РІРѕСЃС‚ РЅРµ С…СЂР°РЅРёРј
+     */
+
+    public Node head;
+
+    public List() {
+        head = null;
+    }
+
+
+    /**
+     * Р”РѕР±Р°РІР»СЏРµС‚ Node СЃ РєР»СЋС‡РѕРј Рё Р·РЅР°С‡РµРЅРёРµРј
+     * @param key - РєР»СЋС‡
+     * @param s - Р·РЅР°С‡РµРЅРёРµ
+     */
+
+    public void add(String key, String s) {
+        Node node = new Node(key, s);
+        if(head == null) {
+            head = node;
+        }
+        else {
+            node.next = head;
+            head.prev = node;
+            head = node;
+        }
+    }
+
+    /**
+     * РџСЂРѕРІРµСЂРєР° РЅР° РїСЂРёСЃСѓС‚СЃС‚РІРёРµ РґР°РЅРЅРѕРіРѕ РєР»СЋС‡Р° РІ СЃРїРёСЃРєРµ
+     * Р Р°Р±РѕС‚Р°РµС‚ Р·Р° Р»РёРЅРёСЋ, РєР°Рє РїРѕРёСЃРє РІ РѕР±С‹С‡РЅРѕРј РґРІСѓСЃРІСЏР·РЅРѕРј СЃРїРёСЃРєРµ
+     * Р­С‚РѕС‚ Р¶Рµ РїРµСЂРµР±РѕСЂ РїСЂРёРјРµРЅСЏРµС‚СЃСЏ РІ РїРѕСЃР»РµРґСѓСЋС‰РёР№ РјРµС‚РѕРґР°С…
+     * @param key - РєР»СЋС‡
+     * @return true, РµСЃР»Рё РµСЃС‚СЊ С‚Р°РєРѕР№, Рё false РёРЅР°С‡Рµ
+     */
+
+    public boolean contains(String key) {
+        Node cur = head;
+        while(cur != null) {
+            if(cur.key.equals(key)) return true;
+            cur = cur.next;
+        }
+        return false;
+    }
+
+    /**
+     * РЈРґР°Р»РµРЅРёРµ РєР»СЋС‡Р° Рё Р·РЅР°С‡РµРЅРёСЏ: РїСЂРѕРёСЃС…РѕРґРёС‚, РєР°Рє РІ РѕР±С‹С‡РЅРѕРј РґРІСѓСЃРІСЏР·РЅРѕРј СЃРїРёСЃРєРµ
+     * @param key - РєР»СЋС‡
+     * @return Р·РЅР°С‡РµРЅРёРµ РїРѕ РєР»СЋС‡Сѓ РёР»Рё null, РµСЃР»Рё С‚Р°РєРѕРіРѕ РєР»СЋС‡Р° РЅРµС‚
+     */
+
+    public String remove(String key) {
+        Node cur = head;
+        while(cur != null) {
+            if(cur.key.equals(key)) {
+                if(cur.equals(head)) {
+                    if(cur.next == null) {
+                        head = null;
+                    } else {
+                        head = cur.next;
+                        head.prev = null;
+                    }
+                } else {
+                    if(cur.next == null) {
+                        cur.prev.next = null;
+                    } else {
+                        cur.prev.next = cur.next;
+                        cur.next.prev = cur.prev;
+                    }
+                }
+                return cur.s;
+            }
+            cur = cur.next;
+        }
+        return null;
+    }
+
+    /**
+     * Р’РѕР·РІСЂР°С‰Р°РµС‚ Р·РЅР°С‡РµРЅРёРµ РїРѕ РєР»СЋС‡Сѓ, РЅРµ РјРµРЅСЏСЏ СЃРїРёСЃРѕРє
+     * @param key - РєР»СЋС‡
+     * @return Р·РЅР°С‡РµРЅРёРµ, РµСЃР»Рё РєР»СЋС‡ РЅР°Р№РґРµРЅ РёР»Рё null, РµСЃР»Рё РєР»СЋС‡Р° РЅРµС‚
+     */
+
+    public String get(String key) {
+        Node cur = head;
+        while(cur != null) {
+            if(cur.key.equals(key)) return cur.s;
+            cur = cur.next;
+        }
+        return null;
+    }
+
 }
