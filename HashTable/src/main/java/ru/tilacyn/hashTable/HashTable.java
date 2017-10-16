@@ -89,13 +89,17 @@ public class HashTable {
     }
 
     /**
-     * Кладет в хеш-таблицу новую пару ключ, значение
+     * кладет в хеш-таблицу новую пару ключ, значение
+     * если размер более, чем в два раза превышает размер массива data, вызывается метод rebuild
      * @param key - ключ
      * @param s - значение
      * @return значение, если этот ключ присутствовал в хеш-табоице или null иначе
      */
 
     public String put(String key, String s) {
+        if(size > 2 * data.length) {
+            rebuild();
+        }
         int i = getHash(key);
         String res = null;
         if(contains(key)) {
@@ -116,6 +120,29 @@ public class HashTable {
         data = new List[n];
         for(int i = 0; i < n; i++) {
             data[i] = new List();
+        }
+    }
+
+    /**
+     * rebuilds our HashTable
+     * it increases size of data array twice
+     * and copies all data to a new List array
+     * rehashing is being done since now our hash-function has changed
+     */
+
+    public void rebuild() {
+        int n = data.length;
+        List[] oldData = data.clone();
+        data = new List[2 * n];
+        for(int i = 0; i < 2 * n; i++) {
+            data[i] = new List();
+        }
+
+        for(int i = 0; i < n; i++) {
+            while(oldData[i].head != null) {
+                put(oldData[i].head.key, oldData[i].head.s);
+                oldData[i].remove(oldData[i].head.key);
+            }
         }
     }
 }

@@ -7,15 +7,6 @@ package ru.tilacyn.list;
  *
  */
 
-class Node {
-    public String s, key;
-    public Node next, prev;
-    Node(String key, String s){
-        next = prev = null;
-        this.s = s;
-        this.key = key;
-    }
-}
 
 
 /**
@@ -26,6 +17,15 @@ class Node {
  */
 
 public class List {
+    public class Node {
+        public String s, key;
+        public Node next, prev;
+        Node(String key, String s) {
+            next = prev = null;
+            this.s = s;
+            this.key = key;
+        }
+    }
 
     /**
      * Голова списка, хвост не храним
