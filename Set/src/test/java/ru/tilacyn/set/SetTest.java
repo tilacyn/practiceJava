@@ -31,35 +31,35 @@ public class SetTest {
 
         Set<Integer> setInt = new Set<Integer>();
 
-        assert setInt.add(1);
-        assert setInt.add(2);
-        assert setInt.add(3);
-        assert setInt.add(4);
-        assert setInt.add(5);
+        assertTrue(setInt.add(1));
+        assertTrue(setInt.add(2));
+        assertTrue(setInt.add(3));
+        assertTrue(setInt.add(4));
+        assertTrue(setInt.add(5));
         assertFalse(setInt.add(5));
-        assert setInt.contains(1);
-        assert setInt.contains(2);
-        assert setInt.contains(3);
-        assert setInt.contains(4);
-        assert setInt.contains(5);
+        assertTrue(setInt.contains(1));
+        assertTrue(setInt.contains(2));
+        assertTrue(setInt.contains(3));
+        assertTrue(setInt.contains(4));
+        assertTrue(setInt.contains(5));
         assertFalse(setInt.contains(6));
 
         Set<String> setStr = new Set<String>();
 
-        assert setStr.add("1");
-        assert setStr.add("lol");
-        assert setStr.add("kek");
-        assert setStr.add("wow");
-        assert setStr.add("omg");
-        assert setStr.add("superkek");
-        assert setStr.add("rofl");
+        assertTrue(setStr.add("1"));
+        assertTrue(setStr.add("lol"));
+        assertTrue(setStr.add("kek"));
+        assertTrue(setStr.add("wow"));
+        assertTrue(setStr.add("omg"));
+        assertTrue(setStr.add("superkek"));
+        assertTrue(setStr.add("rofl"));
 
-        assert setStr.contains("1");
-        assert setStr.contains("lol");
-        assert setStr.contains("kek");
-        assert setStr.contains("wow");
-        assert setStr.contains("omg");
-        assert setStr.contains("rofl");
+        assertTrue(setStr.contains("1"));
+        assertTrue(setStr.contains("lol"));
+        assertTrue(setStr.contains("kek"));
+        assertTrue(setStr.contains("wow"));
+        assertTrue(setStr.contains("omg"));
+        assertTrue(setStr.contains("rofl"));
 
         assertFalse(setStr.add("1"));
         assertFalse(setStr.add("lol"));
@@ -67,26 +67,26 @@ public class SetTest {
         assertFalse(setStr.add("omg"));
         assertFalse(setStr.add("1"));
 
-        assert setStr.contains("1");
-        assert setStr.contains("lol");
-        assert setStr.contains("kek");
-        assert setStr.contains("wow");
-        assert setStr.contains("omg");
-        assert setStr.contains("rofl");
+        assertTrue(setStr.contains("1"));
+        assertTrue(setStr.contains("lol"));
+        assertTrue(setStr.contains("kek"));
+        assertTrue(setStr.contains("wow"));
+        assertTrue(setStr.contains("omg"));
+        assertTrue(setStr.contains("rofl"));
 
         Set<Cmp> setCmp = new Set<Cmp>();
 
 
-        assert setCmp.add(new Cmp(1));
-        assert setCmp.add(new Cmp(109));
+        assertTrue(setCmp.add(new Cmp(1)));
+        assertTrue(setCmp.add(new Cmp(109)));
         assertFalse(setCmp.add(new Cmp(1)));
-        assert setCmp.add(new Cmp(11));
-        assert setCmp.add(new Cmp(223));
+        assertTrue(setCmp.add(new Cmp(11)));
+        assertTrue(setCmp.add(new Cmp(223)));
 
-        assert setCmp.contains(new Cmp(1));
-        assert setCmp.contains(new Cmp(109));
-        assert setCmp.contains(new Cmp(11));
-        assert setCmp.contains(new Cmp(223));
+        assertTrue(setCmp.contains(new Cmp(1)));
+        assertTrue(setCmp.contains(new Cmp(109)));
+        assertTrue(setCmp.contains(new Cmp(11)));
+        assertTrue(setCmp.contains(new Cmp(223)));
 
     }
 
@@ -99,9 +99,9 @@ public class SetTest {
         setInt.add(-100);
         setInt.add(-1000);
 
-        for(int i = -1000; i < 1000; i++){
-            if(i == -1 || i == -10 || i == -100 || i == -1000) {
-                assert setInt.contains(i);
+        for (int i = -1000; i < 1000; i++) {
+            if (i == -1 || i == -10 || i == -100 || i == -1000) {
+                assertTrue(setInt.contains(i));
             } else {
                 assertFalse(setInt.contains(i));
             }
@@ -115,7 +115,7 @@ public class SetTest {
 
         setInt.add(0);
 
-        for(int i = 1; i < 100; i++) {
+        for (int i = 1; i < 100; i++) {
             setInt.add(i);
             assertEquals(setInt.size(), i + 1);
             int k = Math.abs(new java.util.Random().nextInt()) % i;
@@ -127,7 +127,7 @@ public class SetTest {
 
         setCmp.add(new Cmp(0));
 
-        for(int i = 1; i < 100; i++) {
+        for (int i = 1; i < 100; i++) {
             setCmp.add(new Cmp(i));
             assertEquals(setCmp.size(), i + 1);
             int k = Math.abs(new java.util.Random().nextInt()) % i;
