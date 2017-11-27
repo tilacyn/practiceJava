@@ -9,6 +9,7 @@ public class Set<T extends Comparable<? super T>> {
 
     /**
      * vertice of BST with value of type T and children of type Node stored
+     *
      * @param <T> type of value stored
      */
     private class Node<T extends Comparable<? super T>> {
@@ -21,14 +22,10 @@ public class Set<T extends Comparable<? super T>> {
         }
     }
 
-    /**
-     * tree head
-     */
+    /** tree head */
     private Node tree = null;
 
-    /**
-     * set size
-     */
+    /** set size */
     private int size = 0;
 
     /**
