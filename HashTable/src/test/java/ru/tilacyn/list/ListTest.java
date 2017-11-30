@@ -1,10 +1,8 @@
 package ru.tilacyn.list;
 
-import org.junit.Assert.*;
-
 import org.junit.Test;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.*;
 
 
 public class ListTest {
@@ -34,17 +32,17 @@ public class ListTest {
     @Test
     public void isEmpty() throws Exception {
         List l = new List();
-        assert l.isEmpty();
+        assertTrue(l.isEmpty());
         l.add(" ", " ");
-        assert !l.isEmpty();
+        assertFalse(l.isEmpty());
         l.remove(" ");
-        assert l.isEmpty();
+        assertTrue(l.isEmpty());
         l.add("hello", "bye");
-        assert !l.isEmpty();
+        assertFalse(l.isEmpty());
         l.remove(" ");
-        assert !l.isEmpty();
+        assertFalse(l.isEmpty());
         l.remove("hello");
-        assert l.isEmpty();
+        assertTrue(l.isEmpty());
     }
 
     @Test
@@ -70,29 +68,29 @@ public class ListTest {
         List l = new List();
         l.add("1", "2");
         l.add("2", "!");
-        assert l.contains("1");
-        assert l.contains("2");
-        assert !l.contains("!");
-        assert !l.contains("3");
+        assertTrue(l.contains("1"));
+        assertTrue(l.contains("2"));
+        assertFalse(l.contains("!"));
+        assertFalse(l.contains("3"));
 
 
         l.add("1", "2");
         l.add("2", "!");
-        assert l.contains("1");
-        assert l.contains("2");
-        assert !l.contains("!");
-        assert !l.contains("3");
+        assertTrue(l.contains("1"));
+        assertTrue(l.contains("2"));
+        assertFalse(l.contains("!"));
+        assertFalse(l.contains("3"));
 
         l.add("-1", "-1");
         l.add("-1", "-1");
         l.add("100", "-1");
 
-        assert l.contains("100");
-        assert l.contains("-1");
-        assert !l.contains("3");
-        assert !l.contains("0");
-        assert l.contains("1");
-        assert l.contains("2");
+        assertTrue(l.contains("100"));
+        assertTrue(l.contains("-1"));
+        assertFalse(l.contains("3"));
+        assertFalse(l.contains("0"));
+        assertTrue(l.contains("1"));
+        assertTrue(l.contains("2"));
     }
 
     @Test
@@ -110,11 +108,11 @@ public class ListTest {
     public void contains() {
         List l = new List();
         l.add("1", "2");
-        assert l.contains("1");
+        assertTrue(l.contains("1"));
         l.add("3", "4");
-        assert l.contains("3");
+        assertTrue(l.contains("3"));
         l.remove("1");
-        assert !(l.contains("1"));
+        assertFalse(l.contains("1"));
     }
 
     @Test
