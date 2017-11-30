@@ -9,7 +9,6 @@ import static org.junit.Assert.*;
 /**
  * test class for Spiral
  */
-
 public class SpiralTest {
     @Test
     public void printSpiral() {

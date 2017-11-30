@@ -1,11 +1,8 @@
 package ru.tilacyn.spiral;
 
-import java.util.*;
-
 /**
  * a class with two static methods processing matrix
  */
-
 public class Spiral {
 
     /**
@@ -13,40 +10,39 @@ public class Spiral {
      * (1, 1), (1, 2), (2, 2), (2, 1), (2, 0), (1, 0), (0, 0) etc.
      * for matrix: 3x3
      *
-     * @param arr - matrix
+     * @param array - matrix
      * @return res - a one-dimensional array with matrix elements
      * that have been put in the order described
      */
-
-    public static int[] printSpiral(int arr[][]) {
-        int n = arr.length;
+    public static int[] printSpiral(int array[][]) {
+        int n = array.length;
         int curi = n / 2;
         int curj = n / 2;
         int countPassed = 0;
         int[] res = new int[n * n];
         if (n == 1) {
-            res[0] = arr[0][0];
+            res[0] = array[0][0];
             return res;
         }
 
-        res[countPassed++] = arr[curi][curj++];
-        res[countPassed++] = arr[curi][curj];
+        res[countPassed++] = array[curi][curj++];
+        res[countPassed++] = array[curi][curj];
 
         for (int i = 2; i < n; i += 2) {
 
             for (int j = 0; j < i - 1; j++) {
                 curi++;
-                res[countPassed++] = arr[curi][curj];
+                res[countPassed++] = array[curi][curj];
             }
 
             for (int j = 0; j < i; j++) {
                 curj--;
-                res[countPassed++] = arr[curi][curj];
+                res[countPassed++] = array[curi][curj];
             }
 
             for (int j = 0; j < i; j++) {
                 curi--;
-                res[countPassed++] = arr[curi][curj];
+                res[countPassed++] = array[curi][curj];
             }
             int k = i + 1;
             if (i == n - 1) {
@@ -55,7 +51,7 @@ public class Spiral {
 
             for (int j = 0; j < k; j++) {
                 curj++;
-                res[countPassed++] = arr[curi][curj];
+                res[countPassed++] = array[curi][curj];
             }
         }
         return res;
@@ -66,18 +62,17 @@ public class Spiral {
      * this function guarantees that al the columns, that have the same first elements
      * will be left in the original order
      *
-     * @param arr - matrix
+     * @param array - matrix
      * @return result matrix
      */
-
-    public static int[][] sortByCols(int arr[][]) {
-        int n = arr.length;
+    public static int[][] sortByCols(int array[][]) {
+        int n = array.length;
         int[] firstRow = new int[n];
         int[] firstRowIndexes = new int[n];
         int[][] res = new int[n][n];
 
         for (int i = 0; i < n; i++) {
-            firstRow[i] = arr[0][i];
+            firstRow[i] = array[0][i];
             firstRowIndexes[i] = i;
         }
 
@@ -102,7 +97,7 @@ public class Spiral {
         for (int j = 0; j < n; j++) {
             int col = firstRowIndexes[j];
             for (int i = 0; i < n; i++) {
-                res[i][j] = arr[i][col];
+                res[i][j] = array[i][col];
             }
         }
         return res;
