@@ -4,12 +4,11 @@ import org.junit.Test;
 
 import java.util.Random;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * a test class for HashTable
  */
-
 public class HashTableTest {
 
     @Test
@@ -17,7 +16,7 @@ public class HashTableTest {
         HashTable ht = new HashTable(4);
         ht.put("1", "2");
         ht.clear();
-        assert !(ht.contains("1"));
+        assertFalse(ht.contains("1"));
         assertEquals(ht.size(), 0);
     }
 
@@ -30,8 +29,8 @@ public class HashTableTest {
     @Test
     public void getHash() {
         HashTable ht = new HashTable(100);
-        assert ht.getHash("1") == ht.getHash("1");
-        assert ht.getHash("2") < 100 && ht.getHash("2") >= 0;
+        assertTrue(ht.getHash("1") == ht.getHash("1"));
+        assertTrue(ht.getHash("2") < 100 && ht.getHash("2") >= 0);
     }
 
     public String makeRandomString() {
@@ -66,8 +65,8 @@ public class HashTableTest {
             if (key1.hashCode() % 10 == key2.hashCode() % 10) {
                 assertEquals(ht.put(key1, "1"), null);
                 assertEquals(ht.put(key2, "2"), null);
-                assert ht.contains(key1);
-                assert ht.contains(key2);
+                assertTrue(ht.contains(key1));
+                assertTrue(ht.contains(key2));
                 assertEquals(ht.get(key1), "1");
                 assertEquals(ht.get(key2), "2");
             }
@@ -106,12 +105,12 @@ public class HashTableTest {
     @Test
     public void contains() {
         HashTable ht = new HashTable(10);
-        assert !(ht.contains("1"));
+        assertFalse(ht.contains("1"));
         ht.put("1", "2");
         ht.put("3", "4");
-        assert (ht.contains("1"));
+        assertTrue(ht.contains("1"));
         ht.remove("1");
-        assert !(ht.contains("1"));
+        assertFalse(ht.contains("1"));
     }
 
     @Test
