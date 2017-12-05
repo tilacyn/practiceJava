@@ -1,97 +1,113 @@
 package ru.tilacyn.list;
 
-/**
- * Класс Node: вспомогательный класс для List
- * Хранит пару: {key, s}
- * @author tilac
- *
- */
-
-class Node {
-    public String s, key;
-    public Node next, prev;
-    Node(String key, String s){
-        next = prev = null;
-        this.s = s;
-        this.key = key;
-    }
-}
-
 
 /**
- * Двусвязный список List (в реализации HashTable коллизии устраняются методом цепочек)
- *
- * @author tilac
- *
+ * doubly linked list for class HashTable
+ * collisions are processed by chain method
  */
-
 public class List {
 
     /**
-     * Голова списка, хвост не храним
+     * class Node - additional class for List
+     * stores pair {String key, String value}
+     * also stores two references to the previous Node and to the next Node in the list
+     * fields are public because Node is a private class
+     * and there is no use of making them private because of four necessary setters and getters
      */
+    private class Node {
+        /**
+         * stored pair {String key, String s}
+         */
+        public String s, key;
 
-    public Node head;
+        /**
+         * stored Node next
+         * stored Node prev
+         */
+        public Node next, prev;
 
-    public List() {
-        head = null;
+        /**
+         * initializes next, prev by null
+         * initializes key, s by arguments
+         * @param key
+         * @param s
+         */
+        Node(String key, String s) {
+            next = prev = null;
+            this.s = s;
+            this.key = key;
+        }
     }
 
+    /**
+     * head of the list
+     */
+    private Node head = null;
 
     /**
-     * Добавляет Node с ключом и значением
-     * @param key - ключ
-     * @param s - значение
+     * number of pairs {key, value} in the list
      */
+    private int size = 0;
 
+    /**
+     * adds Node with {key, s} to the list
+     * @param key
+     * @param s
+     */
     public void add(String key, String s) {
         Node node = new Node(key, s);
-        if(head == null) {
+        if (head == null) {
             head = node;
-        }
-        else {
+        } else {
             node.next = head;
             head.prev = node;
             head = node;
         }
+        size++;
     }
 
     /**
-     * Проверка на присутствие данного ключа в списке
-     * Работает за линию, как поиск в обычном двусвязном списке
-     * Этот же перебор применяется в последующий методах
-     * @param key - ключ
-     * @return true, если есть такой, и false иначе
+     * @return size of the list
      */
+    public int size() {
+        return size;
+    }
 
+
+    /**
+     * check whether this key appears in the list
+     * @param key
+     * @return if appears then true else false
+     */
     public boolean contains(String key) {
         Node cur = head;
-        while(cur != null) {
-            if(cur.key.equals(key)) return true;
+        while (cur != null) {
+            if (cur.key.equals(key)) return true;
             cur = cur.next;
         }
         return false;
     }
 
     /**
-     * Удаление ключа и значения: происходит, как в обычном двусвязном списке
-     * @param key - ключ
-     * @return значение по ключу или null, если такого ключа нет
+     * removes key and value stored by key in list
+     * actually it removes the only first appearance of key in list
+     * @param key
+     * @return if key appears in table, then value stored by key, else null
      */
-
     public String remove(String key) {
+        size--;
         Node cur = head;
-        while(cur != null) {
-            if(cur.key.equals(key)) {
-                if(cur.equals(head)) {
-                    if(cur.next == null) {
+        while (cur != null) {
+            if (cur.key.equals(key)) {
+                if (cur.equals(head)) {
+                    if (cur.next == null) {
                         head = null;
                     } else {
                         head = cur.next;
                         head.prev = null;
                     }
                 } else {
-                    if(cur.next == null) {
+                    if (cur.next == null) {
                         cur.prev.next = null;
                     } else {
                         cur.prev.next = cur.next;
@@ -102,19 +118,38 @@ public class List {
             }
             cur = cur.next;
         }
+        size++;
         return null;
     }
 
     /**
-     * Возвращает значение по ключу, не меняя список
-     * @param key - ключ
-     * @return значение, если ключ найден или null, если ключа нет
+     * @return whether list is empty
      */
+    public boolean isEmpty() {
+        return size == 0;
+    }
 
+    /**
+     * @return if head != null then list head key else null
+     */
+    public String getHeadKey() {
+        if (head == null) {
+            return null;
+        }
+        return head.key;
+    }
+
+    /**
+     * doesn't change list
+     * @param key
+     * @return if key appears in table then value stored by key else null
+     */
     public String get(String key) {
         Node cur = head;
-        while(cur != null) {
-            if(cur.key.equals(key)) return cur.s;
+        while (cur != null) {
+            if (cur.key.equals(key)) {
+                return cur.s;
+            }
             cur = cur.next;
         }
         return null;
