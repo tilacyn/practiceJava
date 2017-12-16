@@ -68,7 +68,7 @@ public class Calculator {
      * @param operations    is used to initialize this.operations
      * @param numbers       is used to initialize this.numbers
      */
-    Calculator(@NotNull String infixSequence, @NotNull Stack operations, @NotNull Stack numbers) {
+    public Calculator(@NotNull String infixSequence, @NotNull Stack operations, @NotNull Stack numbers) {
         this.infixSequence = infixSequence;
         this.numbers = numbers;
         this.operations = operations;
