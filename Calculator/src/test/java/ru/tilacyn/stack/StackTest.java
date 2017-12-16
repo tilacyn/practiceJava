@@ -76,7 +76,6 @@ public class StackTest {
         stack.pop();
         assertEquals(1, (int) stack.top());
         stack.pop();
-        assertEquals(null, stack.top());
         stack.push(6);
         assertEquals(6, (int) stack.top());
         assertEquals("5", (String) stringStack.top());

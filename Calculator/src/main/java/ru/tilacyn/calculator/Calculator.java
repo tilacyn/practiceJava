@@ -1,5 +1,6 @@
 package ru.tilacyn.calculator;
 
+import com.sun.istack.internal.NotNull;
 import ru.tilacyn.stack.Stack;
 
 import java.util.ArrayList;
@@ -7,13 +8,12 @@ import java.util.HashMap;
 
 /**
  * class for reforming mathematical expressions in infix notation to reverse polish notation
- * and evaluationg them in reverse polish notation
+ * and evaluating them in reverse polish notation
  * accepts expressions in infix notation inside the global braces with operation
  * +, -, *, /
  * supports internal braces in the expression
  * if expression given is incorrect nothing is guaranteed, runtime error or wrong answer are both possible
  */
-
 public class Calculator {
     /**
      * expression in infix notation of type string which is always initialized with a constructor argument
@@ -54,7 +54,7 @@ public class Calculator {
      *
      * @param infixSequence is used to initialize this.infixSequence
      */
-    public Calculator(String infixSequence) {
+    public Calculator(@NotNull String infixSequence) {
         this.infixSequence = infixSequence;
         numbers = new Stack<>(infixSequence.length());
         operations = new Stack<>(infixSequence.length());
@@ -64,11 +64,11 @@ public class Calculator {
     /**
      * non-public constructor that allows you to initialize stacks with your own objects
      *
-     * @param infixSequence
-     * @param operations
-     * @param numbers
+     * @param infixSequence is used to initialize this.infixSequence
+     * @param operations    is used to initialize this.operations
+     * @param numbers       is used to initialize this.numbers
      */
-    Calculator(String infixSequence, Stack operations, Stack numbers) {
+    Calculator(@NotNull String infixSequence, @NotNull Stack operations, @NotNull Stack numbers) {
         this.infixSequence = infixSequence;
         this.numbers = numbers;
         this.operations = operations;
@@ -99,14 +99,13 @@ public class Calculator {
      * @param index a point we start reading from
      * @return result integer (always not negative)
      */
-    private int readNumber(Integer index) {
+    private int readNumber(@NotNull Integer index) {
         int res = 0;
         while (index < infixSequence.length() && isDigit(infixSequence.charAt(index))) {
             res *= 10;
             res += (int) infixSequence.charAt(index) - (int) '0';
             index++;
         }
-        index--;
         return res;
     }
 
@@ -115,11 +114,7 @@ public class Calculator {
      * @return true if it is digit, false otherwise
      */
     private boolean isDigit(char c) {
-        if ((int) c >= (int) '0' && (int) c <= '9') {
-            return true;
-        } else {
-            return false;
-        }
+        return (int) c >= '0' && (int) c <= '9';
     }
 
     /**
@@ -198,7 +193,7 @@ public class Calculator {
     /**
      * prints polish sequence with spaces between elements
      */
-    public void printPolishSequence() {
+    void printPolishSequence() {
         for (int i = 0; i < polishSequence.size(); i++) {
             if (polishSequence.get(i) == -1) {
                 System.out.print("+ ");

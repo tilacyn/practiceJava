@@ -1,5 +1,7 @@
 package ru.tilacyn.stack;
 
+import com.sun.istack.internal.Nullable;
+
 /**
  * realisation of a simple generic stack based on array
  *
@@ -31,7 +33,7 @@ public class Stack<T> {
      *
      * @param elem of type T we push in stack
      */
-    public void push(T elem) {
+    public void push(@Nullable T elem) {
         array[size] = elem;
         size++;
     }
@@ -42,9 +44,6 @@ public class Stack<T> {
      * @return the top of the stack or null if stack is empty
      */
     public T pop() {
-        if (size == 0) {
-            return null;
-        }
         size--;
         return array[size];
     }
@@ -53,9 +52,6 @@ public class Stack<T> {
      * @return the top of the stack or null if stack is empty
      */
     public T top() {
-        if (size == 0) {
-            return null;
-        }
         return array[size - 1];
     }
 
