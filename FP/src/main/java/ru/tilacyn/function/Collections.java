@@ -1,11 +1,12 @@
 package ru.tilacyn.function;
 
+import com.sun.istack.internal.NotNull;
+
 import java.util.*;
 
 /**
  * A class with some methods on iterable structures
  */
-
 public class Collections {
 
     /**
@@ -16,11 +17,10 @@ public class Collections {
      * @param vector iterable structure
      * @param <U>    source structure element type
      * @param <T>    result structure element type
-     * @return new ArrayList<T>
+     * @return new AbstractList<T> of new elements that are results of f application to vector elements
      */
-
-
-    public <U, T> ArrayList<T> map(Function1<U, T> f, Iterable<U> vector) {
+    public <U, T> AbstractList<T> map(@NotNull final Function1<? super U, ? extends T> f,
+                                      @NotNull final Iterable<? extends U> vector) {
         ArrayList<T> resVector = new ArrayList<T>();
         for (U element : vector) {
             resVector.add(f.apply(element));
@@ -35,10 +35,10 @@ public class Collections {
      * @param f      one-argument predicate
      * @param vector iterable structure
      * @param <U>    source structure element type
-     * @return new ArrayList<U>
+     * @return new AbstractList<U> of vector elements that satisfy predicate
      */
-
-    public <U> ArrayList<U> filter(Predicate<U> f, Iterable<U> vector) {
+    public <U> AbstractList<U> filter(@NotNull final Predicate<? super U> f,
+                                      @NotNull final Iterable<? extends U> vector) {
         ArrayList<U> resVector = new ArrayList<U>();
         for (U element : vector) {
             if (f.apply(element)) {
@@ -55,10 +55,10 @@ public class Collections {
      * @param f      one-argument predicate
      * @param vector iterable structure
      * @param <U>    source structure element type
-     * @return new ArrayList<U>
+     * @return new AbstractList<U> of the first vector elements that satisfy the predicate
      */
-
-    public <U> ArrayList<U> takeWhile(Predicate<U> f, Iterable<U> vector) {
+    public <U> AbstractList<U> takeWhile(@NotNull final Predicate<? super U> f,
+                                         @NotNull final Iterable<? extends U> vector) {
         ArrayList<U> resVector = new ArrayList<U>();
         for (U element : vector) {
             if (f.apply(element)) {
@@ -77,19 +77,11 @@ public class Collections {
      * @param f      one-argument predicate
      * @param vector iterable structure
      * @param <U>    source structure element type
-     * @return new ArrayList<U>
+     * @return new AbstractList<U> of the first elements that do not satisfy predicate
      */
-
-    public <U> ArrayList<U> takeUnless(Predicate<U> f, Iterable<U> vector) {
-        ArrayList<U> resVector = new ArrayList<U>();
-        for (U element : vector) {
-            if (!f.apply(element)) {
-                resVector.add(element);
-            } else {
-                break;
-            }
-        }
-        return resVector;
+    public <U> AbstractList<U> takeUnless(@NotNull final Predicate<? super U> f,
+                                          @NotNull final Iterable<? extends U> vector) {
+        return takeWhile(f.not(), vector);
     }
 
     /**
@@ -102,8 +94,9 @@ public class Collections {
      * @param <T>    f return value type
      * @return last application result
      */
-
-    public <U, T> T foldl(Function2<U, T, T> f, T start, Collection<U> vector) {
+    public <U, T> T foldl(@NotNull final Function2<? super U, ? super T, ? extends T> f,
+                          T start,
+                          @NotNull final Collection<? extends U> vector) {
         ArrayList<U> resVector = new ArrayList<U>();
         for (U element : vector) {
             start = f.apply(element, start);
@@ -116,13 +109,14 @@ public class Collections {
      *
      * @param f          two-arguments function
      * @param start      start value
-     * @param collection
+     * @param collection that is going to be folded
      * @param <U>        collection elements type
      * @param <T>        f return value type
      * @return last application result
      */
-
-    public <U, T> T foldr(Function2<U, T, T> f, T start, Collection<U> collection) {
+    public <U, T> T foldr(@NotNull final Function2<? super U, ? super T, ? extends T> f,
+                          T start,
+                          @NotNull final Collection<? extends U> collection) {
         ArrayList<U> vector = new ArrayList<U>();
         vector.addAll(collection);
         for (int i = 0; i < vector.size(); i++) {

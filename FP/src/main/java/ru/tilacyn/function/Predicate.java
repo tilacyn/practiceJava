@@ -1,11 +1,12 @@
 package ru.tilacyn.function;
 
+import com.sun.istack.internal.NotNull;
+
 /**
  * an interface extends Function1 interface, describes one-argument predicates
  *
  * @param <T> - argument type
  */
-
 public interface Predicate<T> extends Function1<T, Boolean> {
 
     /**
@@ -15,8 +16,7 @@ public interface Predicate<T> extends Function1<T, Boolean> {
      * @param other Predicate
      * @return new result Predicate
      */
-
-    default Predicate<T> or(Predicate<T> other) {
+    default Predicate<T> or(@NotNull Predicate<? super T> other) {
         return x -> apply(x) || other.apply(x);
     }
 
@@ -27,8 +27,7 @@ public interface Predicate<T> extends Function1<T, Boolean> {
      * @param other Predicate
      * @return new result Predicate
      */
-
-    default Predicate<T> and(Predicate<T> other) {
+    default Predicate<T> and(@NotNull Predicate<? super T> other) {
         return x -> apply(x) && other.apply(x);
     }
 
@@ -37,7 +36,6 @@ public interface Predicate<T> extends Function1<T, Boolean> {
      *
      * @return new result predicate
      */
-
     default Predicate<T> not() {
         return x -> !apply(x);
     }
@@ -45,11 +43,8 @@ public interface Predicate<T> extends Function1<T, Boolean> {
     /**
      * static constants
      */
-
-    Predicate ALWAYS_TRUE = x -> true;
-    Predicate ALWAYS_FALSE = x -> false;
-
-
+    Predicate<?> ALWAYS_TRUE = x -> true;
+    Predicate<?> ALWAYS_FALSE = x -> false;
 }
 
 

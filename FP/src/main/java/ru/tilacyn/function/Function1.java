@@ -1,5 +1,7 @@
 package ru.tilacyn.function;
 
+import com.sun.istack.internal.NotNull;
+
 import java.util.*;
 import java.io.*;
 import java.lang.String;
@@ -11,7 +13,6 @@ import java.lang.String;
  * @param <U> argument type
  * @param <V> return type
  */
-
 public interface Function1<U, V> {
 
     /**
@@ -20,8 +21,6 @@ public interface Function1<U, V> {
      * @param x argument
      * @return function result
      */
-
-
     public V apply(U x);
 
     /**
@@ -32,8 +31,7 @@ public interface Function1<U, V> {
      * @param <T> return value type of function g
      * @return one-argument function, which is a result of composition
      */
-
-    default <T> Function1<U, T> compose(Function1<V, T> g) {
+    default <T> Function1<U, T> compose(@NotNull Function1<? super V, ? extends T> g) {
         return x -> g.apply(apply(x));
     }
 }

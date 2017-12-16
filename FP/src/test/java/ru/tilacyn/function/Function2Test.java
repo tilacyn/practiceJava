@@ -21,11 +21,9 @@ public class Function2Test {
 
     @Test
     public void apply() throws Exception {
-
         assertEquals(8, (int) sumSquare.apply(2, 2));
         assertEquals(41, (int) sumSquare.apply(-4, 5));
         assertEquals(961, (int) sumSquare.apply(0, 31));
-
     }
 
     @Test
