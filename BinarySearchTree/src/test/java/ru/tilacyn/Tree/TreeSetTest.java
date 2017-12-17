@@ -2,6 +2,7 @@ package ru.tilacyn.Tree;
 
 import javafx.util.Pair;
 import org.junit.Test;
+import ru.tilacyn.MyTreeSet.MyTreeSet;
 
 import java.util.Comparator;
 
@@ -11,10 +12,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
-public class BinarySearchTreeTest {
+public class TreeSetTest {
     @Test
     public void descendingIterator() throws Exception {
-        BinarySearchTree<Double> bst = new BinarySearchTree<>();
+        TreeSet<Double> bst = new TreeSet<>();
         bst.add(3.4);
         bst.add(4.3);
         bst.add(2.1);
@@ -40,11 +41,37 @@ public class BinarySearchTreeTest {
 
     @Test
     public void descendingSet() throws Exception {
+        TreeSet<Double> bst = new TreeSet<>();
+        bst.add(0.1);
+        bst.add(0.3);
+        bst.add(0.2);
+        bst.add(0.4);
+        bst.add(0.5);
+
+        MyTreeSet descendingBst = bst.descendingSet();
+
+        descendingBst.add(1.0);
+
+        assertTrue(descendingBst.contains(1.0));
+        assertTrue(descendingBst.contains(0.1));
+        assertTrue(descendingBst.contains(0.2));
+        assertTrue(descendingBst.contains(0.3));
+        assertTrue(descendingBst.contains(0.4));
+        assertTrue(descendingBst.contains(0.5));
+
+        Double prev = 2.0;
+
+        for (Object o : descendingBst) {
+            assertTrue((Double) o < prev);
+            prev = (Double) o;
+        }
+
+
     }
 
     @Test
     public void first() throws Exception {
-        BinarySearchTree<Double> bst = new BinarySearchTree<>();
+        TreeSet<Double> bst = new TreeSet<>();
         bst.add(2.3);
         assertEquals((Double) 2.3, bst.first());
         bst.add(4.5);
@@ -60,7 +87,7 @@ public class BinarySearchTreeTest {
 
     @Test
     public void last() throws Exception {
-        BinarySearchTree<Double> bst = new BinarySearchTree<>();
+        TreeSet<Double> bst = new TreeSet<>();
         bst.add(2.3);
         assertEquals((Double) 2.3, bst.last());
         bst.add(4.5);
@@ -81,7 +108,7 @@ public class BinarySearchTreeTest {
 
     @Test
     public void lower() throws Exception {
-        BinarySearchTree<Pair<Integer, Integer>> bst = new BinarySearchTree<>(new Comparator<Pair<Integer, Integer>>() {
+        TreeSet<Pair<Integer, Integer>> bst = new TreeSet<>(new Comparator<Pair<Integer, Integer>>() {
             @Override
             public int compare(Pair<Integer, Integer> o1, Pair<Integer, Integer> o2) {
                 if (o1.getKey().equals(o2.getKey())) {
@@ -106,7 +133,7 @@ public class BinarySearchTreeTest {
 
     @Test
     public void floor() throws Exception {
-        BinarySearchTree<Pair<Integer, Integer>> bst = new BinarySearchTree<>(new Comparator<Pair<Integer, Integer>>() {
+        TreeSet<Pair<Integer, Integer>> bst = new TreeSet<>(new Comparator<Pair<Integer, Integer>>() {
             @Override
             public int compare(Pair<Integer, Integer> o1, Pair<Integer, Integer> o2) {
                 if (o1.getKey().equals(o2.getKey())) {
@@ -135,7 +162,7 @@ public class BinarySearchTreeTest {
     @Test
     public void ceiling() throws Exception {
 
-        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
+        TreeSet<Integer> bst = new TreeSet<>();
         bst.add((Integer) 1);
         bst.print();
         bst.add((Integer) 4);
@@ -158,7 +185,7 @@ public class BinarySearchTreeTest {
 
     @Test
     public void higher() throws Exception {
-        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
+        TreeSet<Integer> bst = new TreeSet<>();
         assert bst.add((Integer) 1);
         bst.print();
         assertFalse(bst.add((Integer) 1));
@@ -181,7 +208,7 @@ public class BinarySearchTreeTest {
         assertEquals(bst.higher(2), (Integer) 4);
         assertEquals(bst.higher(1), (Integer) 2);
 
-        bst = new BinarySearchTree<>();
+        bst = new TreeSet<>();
         for (int i = 0; i < 35; i++) {
             bst.add(i);
         }
@@ -193,7 +220,7 @@ public class BinarySearchTreeTest {
 
     @Test
     public void size() throws Exception {
-        BinarySearchTree<String> bst = new BinarySearchTree<>(new Comparator<String>() {
+        TreeSet<String> bst = new TreeSet<>(new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
                 return ((Integer) o1.hashCode()).compareTo(o2.hashCode());
@@ -216,7 +243,7 @@ public class BinarySearchTreeTest {
 
     @Test
     public void isEmpty() throws Exception {
-        BinarySearchTree<String> bst = new BinarySearchTree<>(new Comparator<String>() {
+        TreeSet<String> bst = new TreeSet<>(new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
                 return ((Integer) o1.hashCode()).compareTo(o2.hashCode());
@@ -233,13 +260,13 @@ public class BinarySearchTreeTest {
 
     @Test
     public void contains() throws Exception {
-        BinarySearchTree<String> bst = new BinarySearchTree<>(new Comparator<String>() {
+        TreeSet<String> bst = new TreeSet<>(new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
                 return ((Integer) o1.hashCode()).compareTo(o2.hashCode());
             }
         });
-        BinarySearchTree<Integer> bstWeird = new BinarySearchTree<>(new Comparator<Integer>() {
+        TreeSet<Integer> bstWeird = new TreeSet<>(new Comparator<Integer>() {
             @Override
             public int compare(Integer o1, Integer o2) {
                 Integer a = o1 * o1;
@@ -273,7 +300,7 @@ public class BinarySearchTreeTest {
 
     @Test
     public void iterator() throws Exception {
-        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
+        TreeSet<Integer> bst = new TreeSet<>();
         bst.add(0);
         bst.add(20);
         bst.add(10);
@@ -299,7 +326,7 @@ public class BinarySearchTreeTest {
 
     @Test
     public void toArray() throws Exception {
-        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
+        TreeSet<Integer> bst = new TreeSet<>();
         ArrayList<Integer> vector = new ArrayList<>();
         for (int i = 0; i < 35; i++) {
             bst.add(i);
@@ -311,7 +338,7 @@ public class BinarySearchTreeTest {
 
     @Test
     public void toArray1() throws Exception {
-        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
+        TreeSet<Integer> bst = new TreeSet<>();
         ArrayList<Integer> vector = new ArrayList<>();
         Integer[] res1 = new Integer[35];
         Integer[] res2 = new Integer[0];
@@ -327,7 +354,7 @@ public class BinarySearchTreeTest {
 
     @Test
     public void add() throws Exception {
-        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
+        TreeSet<Integer> bst = new TreeSet<>();
         assert bst.add((Integer) 1);
         bst.print();
         assertFalse(bst.add((Integer) 1));
@@ -346,7 +373,7 @@ public class BinarySearchTreeTest {
 
     @Test
     public void remove() throws Exception {
-        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
+        TreeSet<Integer> bst = new TreeSet<>();
         assertFalse(bst.remove(4));
         bst.add((Integer) 1);
         bst.add((Integer) 4);
@@ -368,7 +395,7 @@ public class BinarySearchTreeTest {
         assert !bst.remove(1);
         assert !bst.contains((Integer) (1));
 
-        bst = new BinarySearchTree<>();
+        bst = new TreeSet<>();
         for (int i = 0; i < 9; i++) {
             bst.add(i);
         }
@@ -387,7 +414,7 @@ public class BinarySearchTreeTest {
 
     @Test
     public void containsAll() throws Exception {
-        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
+        TreeSet<Integer> bst = new TreeSet<>();
         ArrayList<Integer> vector = new ArrayList<>();
         for (int i = 0; i < 30; i++) {
             bst.add(i);
@@ -413,7 +440,7 @@ public class BinarySearchTreeTest {
 
     @Test
     public void addAll() throws Exception {
-        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
+        TreeSet<Integer> bst = new TreeSet<>();
         ArrayList<Integer> vector = new ArrayList<>();
         for (int i = 0; i < 29; i++) {
             vector.add(i);
@@ -436,7 +463,7 @@ public class BinarySearchTreeTest {
 
     @Test
     public void retainAll() throws Exception {
-        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
+        TreeSet<Integer> bst = new TreeSet<>();
         ArrayList<Integer> vector = new ArrayList<>(29);
         for (int i = 0; i < 29; i++) {
             vector.add(i);
@@ -460,7 +487,7 @@ public class BinarySearchTreeTest {
 
     @Test
     public void removeAll() throws Exception {
-        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
+        TreeSet<Integer> bst = new TreeSet<>();
         ArrayList<Integer> vector = new ArrayList<>(29);
 
         for (int i = 0; i < 29; i++) {
@@ -490,7 +517,7 @@ public class BinarySearchTreeTest {
 
     @Test
     public void clear() throws Exception {
-        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
+        TreeSet<Integer> bst = new TreeSet<>();
         for (int i = 0; i < 10; i++) {
             bst.add(i);
         }
