@@ -39,7 +39,6 @@ public class ReflectorTest {
     }
 
 
-
     @Test
     public void diffEmptyClasses() throws Exception {
         Reflector reflector = new Reflector();
@@ -79,7 +78,7 @@ public class ReflectorTest {
 }
 
 
-class ModuleLoader extends ClassLoader{
+class ModuleLoader extends ClassLoader {
     byte b[] = fetchClassFromFS("SomeClass.class");
     Class<?> clazz = new ClassLoader() {
         public Class<?> getClass(String s, byte[] b, int l, int r) {
@@ -101,19 +100,19 @@ class ModuleLoader extends ClassLoader{
         }
 
         // Create the byte array to hold the data
-        byte[] bytes = new byte[(int)length];
+        byte[] bytes = new byte[(int) length];
 
         // Read in the bytes
         int offset = 0;
         int numRead = 0;
         while (offset < bytes.length
-                && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+                && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
             offset += numRead;
         }
 
         // Ensure all the bytes have been read in
         if (offset < bytes.length) {
-            throw new IOException("Could not completely read file "+path);
+            throw new IOException("Could not completely read file " + path);
         }
 
         // Close the input stream and return bytes
@@ -216,11 +215,11 @@ class BF<E extends Elve> {
     E fieldGeneric;
 }
 
-class AO<E extends Object>{
+class AO<E extends Object> {
     E f;
 }
 
-class BO<E>{
+class BO<E> {
     E f;
 }
 
