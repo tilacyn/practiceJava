@@ -2,6 +2,7 @@ package ru.tilacyn.reflector;
 
 import com.sun.javafx.collections.ArrayListenerHelper;
 import org.junit.Test;
+import ru.tilacyn.reflector.Reflector;
 
 import java.io.File;
 import java.lang.reflect.Array;
@@ -68,7 +69,8 @@ class Elve {
 }
 
 
-class Sword {
+class Sword<E> {
+    E kek;
     int length;
     int width;
     int material;
@@ -76,7 +78,8 @@ class Sword {
     Axe teamMate;
 }
 
-class Axe{
+class Axe<T> {
+    T kek;
     int length;
     int width;
     int material;
@@ -97,6 +100,8 @@ public class ReflectorTest {
         Reflector reflector = new Reflector();
 
         reflector.printStructure(Reflector.class);
+        //reflector.printStructure(Axe.class);
+        //reflector.printStructure(Elve.class);
     }
 
 }

@@ -8,13 +8,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Reflector {
+
 
     private FileWriter fileWriter;
 
@@ -23,33 +21,48 @@ public class Reflector {
 
     //processing Strings
 
-    private String makeSimpleReturnType(String s) {
+    private String dollarToDot(String s) {
+        String result = "";
+        for (Character c : s.toCharArray()) {
+            if (c == '$') {
+                result += '.';
+            } else {
+                result += c;
+            }
+        }
+        return result;
+    }
+
+    private String afterDot(String s) {
         int openBrace = s.indexOf('(');
-        int i = openBrace;
-
-        String type = "";
-
-        while (s.charAt(i) != ' ') {
-            i--;
+        int i;
+        String name = "";
+        boolean hasDotOccured = false;
+        for (i = openBrace - 1; i >= 0 && s.charAt(i) != ' '; i--) {
+            if (s.charAt(i) == '.') {
+                hasDotOccured = true;
+            }
+            if (!hasDotOccured) {
+                name = s.charAt(i) + name;
+            }
         }
-        String end = s.substring(i, s.length());
+        return s.substring(0, i + 1) + name + s.substring(openBrace, s.length());
+    }
 
-        while (s.charAt(i) != ' ') {
-            i--;
+    private String afterDotField(String s) {
+        int openBrace = s.indexOf('(');
+        int i;
+        String name = "";
+        boolean hasDotOccured = false;
+        for (i = s.length() - 1; i >= 0 && s.charAt(i) != ' '; i--) {
+            if (s.charAt(i) == '.') {
+                hasDotOccured = true;
+            }
+            if (!hasDotOccured) {
+                name = s.charAt(i) + name;
+            }
         }
-
-        i--;
-
-        while (i >= 0 && s.charAt(i) != ' ') {
-            type = s.charAt(i) + type;
-            i--;
-        }
-
-        i++;
-
-        System.out.println("KEK" + s.substring(0, i) + afterDollar(type) + end);
-
-        return s.substring(0, i) + afterDollar(type) + end;
+        return s.substring(0, i + 1) + name;
     }
 
     private String makeSimpleArgTypes(String s) {
@@ -65,75 +78,31 @@ public class Reflector {
             for (int i = openBrace + 1; i < s.length() && s.charAt(i - 1) != ')'; i++) {
                 System.out.print(s.charAt(i));
                 if (s.charAt(i) == ',') {
-                    result += afterDollar(currentType) + " arg" + ((Integer) argNumber).toString() + ", ";
+                    result += currentType + " arg" + ((Integer) argNumber).toString() + ", ";
                     currentType = "";
                     argNumber++;
                     continue;
                 }
 
                 if (s.charAt(i) == ')') {
-                    result += afterDollar(currentType) + " arg" + ((Integer) argNumber).toString();
+                    result += currentType + " arg" + ((Integer) argNumber).toString();
                     break;
                 }
 
                 currentType += s.charAt(i);
             }
         }
-
-        System.out.println();
-
-        System.out.println(result);
-
-
         return result + s.substring(s.indexOf(')'), s.length());
-
     }
 
-    private String afterDollar(String s) {
-        if (!s.contains("$")) {
-            return s;
+    private String makeGlobalName(String s) {
+        int nameStart = s.indexOf("class ") + 6;
+        int i = nameStart;
+        for (; i < s.length() && s.charAt(i) != ' '; i++) {
         }
-
-        String afterDollar = "";
-
-        for (int i = s.length() - 1; i >= 0; i--) {
-            Character c = s.charAt(i);
-            if (c == '$') {
-                break;
-            }
-            afterDollar = c + afterDollar;
-        }
-        return afterDollar;
+        return s.substring(0, nameStart) + "ResultClass" + s.substring(i, s.length());
     }
 
-    private String afterDot(String s) {
-        String result = "";
-
-        for (int i = s.length() - 1; i >= 0; i--) {
-            Character c = s.charAt(i);
-            if (c == '.') {
-                break;
-            }
-            result = c + result;
-        }
-
-        return result;
-    }
-
-    private String makeSimpleName(String s) {
-        int openBrace = s.indexOf('(');
-        int i;
-
-        for (i = openBrace; i >= 0; i--) {
-            if (s.charAt(i) == ' ') {
-                break;
-            }
-        }
-
-        System.out.println("LOLOLOL " + afterDot(afterDollar(s.substring(i + 1, openBrace))));
-
-        return s.substring(0, i) + " " + afterDot(afterDollar(s.substring(i + 1, openBrace))) + s.substring(openBrace, s.length());
-    }
 
     private String tabs() {
         String tabs = "";
@@ -145,36 +114,11 @@ public class Reflector {
 
     //print methods
 
-    private void printModifiers(int mods) throws IOException {
-        if (Modifier.isPublic(mods)) {
-            fileWriter.write("public ");
-        }
-        if (Modifier.isPrivate(mods)) {
-            fileWriter.write("private ");
-        }
-        if (Modifier.isProtected(mods)) {
-            fileWriter.write("protected ");
-        }
-        if (Modifier.isStatic(mods)) {
-            fileWriter.write("static ");
-        }
-        if (Modifier.isAbstract(mods)) {
-            fileWriter.write("abstract ");
-        }
-        if (Modifier.isFinal(mods)) {
-            fileWriter.write("final ");
-        }
-    }
-
     private void printMethod(Method method) throws IOException {
 
         fileWriter.write(tabs());
 
-
-        fileWriter.write(makeSimpleName(
-                makeSimpleArgTypes(
-                        makeSimpleReturnType(
-                                method.toGenericString()))));
+        fileWriter.write(makeSimpleArgTypes(afterDot(dollarToDot(method.toGenericString()))));
 
         fileWriter.write(" {\n");
 
@@ -208,21 +152,16 @@ public class Reflector {
             return;
         }
 
-
         fileWriter.write(tabs());
 
-        printModifiers(field.getModifiers());
-
-        fileWriter.write(field.getType().getSimpleName() + " " + afterDollar(field.getName()) + ";\n");
+        fileWriter.write(afterDotField(dollarToDot(field.toGenericString())) + ";\n");
     }
 
     private void printConstructor(Constructor constructor, boolean isGlobal) throws IOException {
         fileWriter.write(tabs());
 
         if (isGlobal) {
-            String newSignature = makeSimpleName(
-                    makeSimpleArgTypes(
-                            constructor.toGenericString()));
+            String newSignature = dollarToDot(afterDot(constructor.toGenericString()));
             int i;
             for (i = newSignature.indexOf('('); i >= 0 && newSignature.charAt(i) != ' '; i--) {
             }
@@ -230,9 +169,7 @@ public class Reflector {
                     "ResultClass" +
                     newSignature.substring(newSignature.indexOf('('), newSignature.length()));
         } else {
-            fileWriter.write(makeSimpleName(
-                    makeSimpleArgTypes(
-                            constructor.toGenericString())));
+            fileWriter.write(dollarToDot(afterDot(constructor.toGenericString())));
         }
 
         fileWriter.write(" {\n");
@@ -243,16 +180,10 @@ public class Reflector {
     private void printClass(Class<?> someClass, boolean isGlobal) throws IOException {
         fileWriter.write(tabs());
 
-        printModifiers(someClass.getModifiers());
-
         if (isGlobal) {
-            fileWriter.write(
-                    "class ResultClass extends " + someClass.getSuperclass().getName() + "{" +
-                            "\n\n");
+            fileWriter.write(makeGlobalName(dollarToDot(afterDotField(someClass.toGenericString()))) + "{\n\n");
         } else {
-            fileWriter.write(
-                    "class " + someClass.getSimpleName() + " extends " + someClass.getSuperclass().getName() + "{" +
-                            "\n\n");
+            fileWriter.write(dollarToDot(afterDotField(someClass.toGenericString())) + "{\n\n");
         }
 
 
@@ -260,19 +191,23 @@ public class Reflector {
 
         for (Constructor constructor : someClass.getConstructors()) {
             printConstructor(constructor, isGlobal);
+            System.out.println("cons\n");
         }
 
         for (Field field : someClass.getDeclaredFields()) {
             printField(field, someClass);
+            System.out.println("field\n");
         }
 
 
         for (Method method : someClass.getDeclaredMethods()) {
             printMethod(method);
+            System.out.println("method\n");
         }
 
         for (Class child : someClass.getDeclaredClasses()) {
             printClass(child, false);
+            System.out.println("child\n");
         }
 
         tabsNumber--;
@@ -309,8 +244,12 @@ public class Reflector {
     }
 
 
-
     private boolean processDiffFields(Class<?> first, Class<?> second) throws IOException {
+        //HashSet
+
+        for (Field field : first.getDeclaredFields()) {
+
+        }
         return true;
     }
 
