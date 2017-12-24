@@ -61,7 +61,7 @@ public class MaybeTest {
         assertTrue(Maybe.just("lol").isPresent());
         assertTrue(Maybe.just('c').isPresent());
 
-        assertFalse(Maybe.just(null).isPresent());
+        assertFalse(Maybe.nothing().isPresent());
     }
 
     @Test
@@ -106,7 +106,6 @@ public class MaybeTest {
         array.get(1).get();
         assertEquals(array.get(2).get(), (Integer) 2);
         assertEquals(array.get(3).get(), (Integer) 3);
-
     }
 }
 

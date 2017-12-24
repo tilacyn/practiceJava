@@ -1,6 +1,6 @@
 package ru.tilacyn.maybe;
 
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 
@@ -28,9 +28,9 @@ public class Maybe<T> {
     /**
      * creates Maybe<T> object with a value given as an argument
      *
-     * @param t   - value
+     * @param t   value
      * @param <T>
-     * @return - new object
+     * @return new object
      */
     public static <T> Maybe<T> just(@NotNull T t) {
         return new Maybe<>(t);
@@ -50,7 +50,7 @@ public class Maybe<T> {
      * returns value or throws an exception if there is no value stored
      *
      * @return value
-     * @throws Exception if there this object does not contain anything
+     * @throws EmptyMaybeException if there this object does not contain anything
      */
     public T get() throws EmptyMaybeException {
         if (t != null) {
@@ -69,7 +69,7 @@ public class Maybe<T> {
     /**
      * creates a new object with a value that a function mapper returns
      *
-     * @param mapper - a functions which takes our current value as an argument
+     * @param mapper a functions which takes our current value as an argument
      * @param <U>    return value type
      * @return a new Maybe object with mapper(t) result
      */
@@ -85,8 +85,8 @@ public class Maybe<T> {
      * if it successfully parses an integer from a line then it puts a square of this integer
      * in an output stream
      *
-     * @param is - input stream
-     * @param os - output stream
+     * @param is input stream
+     * @param os output stream
      * @throws Exception if problems with resources occurred
      */
     public static void read(@NotNull FileInputStream is, @NotNull FileOutputStream os) {
