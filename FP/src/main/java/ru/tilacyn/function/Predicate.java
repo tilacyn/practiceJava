@@ -1,6 +1,6 @@
 package ru.tilacyn.function;
 
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * an interface extends Function1 interface, describes one-argument predicates
@@ -43,8 +43,8 @@ public interface Predicate<T> extends Function1<T, Boolean> {
     /**
      * static constants
      */
-    Predicate<?> ALWAYS_TRUE = x -> true;
-    Predicate<?> ALWAYS_FALSE = x -> false;
+    Predicate<Object> ALWAYS_TRUE = x -> true;
+    Predicate<Object> ALWAYS_FALSE = x -> false;
 }
 
 

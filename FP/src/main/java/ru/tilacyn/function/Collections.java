@@ -1,6 +1,6 @@
 package ru.tilacyn.function;
 
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -21,7 +21,7 @@ public class Collections {
      */
     public <U, T> AbstractList<T> map(@NotNull final Function1<? super U, ? extends T> f,
                                       @NotNull final Iterable<? extends U> vector) {
-        ArrayList<T> resVector = new ArrayList<T>();
+        ArrayList<T> resVector = new ArrayList<>();
         for (U element : vector) {
             resVector.add(f.apply(element));
         }
@@ -39,7 +39,7 @@ public class Collections {
      */
     public <U> AbstractList<U> filter(@NotNull final Predicate<? super U> f,
                                       @NotNull final Iterable<? extends U> vector) {
-        ArrayList<U> resVector = new ArrayList<U>();
+        ArrayList<U> resVector = new ArrayList<>();
         for (U element : vector) {
             if (f.apply(element)) {
                 resVector.add(element);
@@ -59,7 +59,7 @@ public class Collections {
      */
     public <U> AbstractList<U> takeWhile(@NotNull final Predicate<? super U> f,
                                          @NotNull final Iterable<? extends U> vector) {
-        ArrayList<U> resVector = new ArrayList<U>();
+        ArrayList<U> resVector = new ArrayList<>();
         for (U element : vector) {
             if (f.apply(element)) {
                 resVector.add(element);
@@ -97,7 +97,7 @@ public class Collections {
     public <U, T> T foldl(@NotNull final Function2<? super U, ? super T, ? extends T> f,
                           T start,
                           @NotNull final Collection<? extends U> vector) {
-        ArrayList<U> resVector = new ArrayList<U>();
+        ArrayList<U> resVector = new ArrayList<>();
         for (U element : vector) {
             start = f.apply(element, start);
         }
@@ -117,8 +117,7 @@ public class Collections {
     public <U, T> T foldr(@NotNull final Function2<? super U, ? super T, ? extends T> f,
                           T start,
                           @NotNull final Collection<? extends U> collection) {
-        ArrayList<U> vector = new ArrayList<U>();
-        vector.addAll(collection);
+        ArrayList<U> vector = new ArrayList<>(collection);
         for (int i = 0; i < vector.size(); i++) {
             start = f.apply(vector.get(vector.size() - i - 1), start);
         }

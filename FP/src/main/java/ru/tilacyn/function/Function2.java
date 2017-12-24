@@ -1,6 +1,6 @@
 package ru.tilacyn.function;
 
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * an interface for two-argument functions
