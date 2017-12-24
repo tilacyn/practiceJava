@@ -1,7 +1,7 @@
 package ru.tilacyn.trie;
 
 
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 
@@ -75,7 +75,7 @@ public class Trie implements Serializable {
      * work time: O(|s|)
      *
      * @param s string
-     * @return false - if trie already contains this string, true - if doesn't
+     * @return false if trie already contains this string, true if doesn't
      */
     public boolean add(@NotNull String s) {
         Node cur = head;
