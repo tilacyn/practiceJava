@@ -69,9 +69,6 @@ public class ReflectorTest {
         reflector.printStructure(AM.class);
         assertTrue(reflector.diffClasses(new ModuleLoader().clazz, AM.class));
 
-        reflector.printStructure(Reflector.class);
-        assertTrue(reflector.diffClasses(new ModuleLoader().clazz, Reflector.class));
-
         reflector.printStructure(ReflectorTest.class);
         assertTrue(reflector.diffClasses(new ModuleLoader().clazz, ReflectorTest.class));
     }
