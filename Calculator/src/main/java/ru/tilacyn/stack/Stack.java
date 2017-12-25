@@ -1,13 +1,20 @@
 package ru.tilacyn.stack;
 
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * realisation of a simple generic stack based on array
  *
  * @param <T> type of elements in stack
  */
+
+
 public class Stack<T> {
+    /**
+     * Exception for cases of pop applied to an empty stack
+     */
+    public static class EmptyStackException extends Exception {
+    }
 
     /**
      * size of the stack
@@ -20,7 +27,7 @@ public class Stack<T> {
     private T[] array;
 
     /**
-     * public constuctor for stack
+     * public constructor for stack
      *
      * @param n size of the stack
      */
@@ -29,11 +36,16 @@ public class Stack<T> {
     }
 
     /**
-     * pushs elem in stack
+     * pushes elem in stack
      *
      * @param elem of type T we push in stack
      */
     public void push(@Nullable T elem) {
+        if (size == array.length) {
+            T[] newArray = (T[]) new Object[2 * size];
+            System.arraycopy(array, 0, newArray, 0, size);
+            array = newArray;
+        }
         array[size] = elem;
         size++;
     }
@@ -42,8 +54,12 @@ public class Stack<T> {
      * removes the top of the stack
      *
      * @return the top of the stack or null if stack is empty
+     * @throws Stack.EmptyStackException if pop is applied to an empty Stack
      */
-    public T pop() {
+    public T pop() throws EmptyStackException {
+        if (size == 0) {
+            throw new EmptyStackException();
+        }
         size--;
         return array[size];
     }

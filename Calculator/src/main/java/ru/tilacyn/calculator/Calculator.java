@@ -1,6 +1,6 @@
 package ru.tilacyn.calculator;
 
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 import ru.tilacyn.stack.Stack;
 
 import java.util.ArrayList;
@@ -48,7 +48,6 @@ public class Calculator {
      */
     private Stack<Integer> numbers;
 
-
     /**
      * public constructor
      *
@@ -68,7 +67,7 @@ public class Calculator {
      * @param operations    is used to initialize this.operations
      * @param numbers       is used to initialize this.numbers
      */
-    public Calculator(@NotNull String infixSequence, @NotNull Stack operations, @NotNull Stack numbers) {
+    Calculator(@NotNull String infixSequence, @NotNull Stack<Character> operations, @NotNull Stack<Integer> numbers) {
         this.infixSequence = infixSequence;
         this.numbers = numbers;
         this.operations = operations;
@@ -118,7 +117,7 @@ public class Calculator {
     }
 
     /**
-     * @param n
+     * @param n integer that is processed
      * @return length of n in digits
      */
     private int getNumberLength(int n) {
@@ -133,8 +132,11 @@ public class Calculator {
 
     /**
      * creates polish sequence from infix sequence using hashmaps and Stack operations
+     *
+     * @throws Stack.EmptyStackException if pop is applied to an empty Stack
+     *                                   this exception might be thrown when input is incorrect
      */
-    void createPolishSequence() {
+    void createPolishSequence() throws Stack.EmptyStackException {
         for (int i = 0; i < infixSequence.length(); i++) {
             if (isDigit(infixSequence.charAt(i))) {
                 int number = readNumber(i);
@@ -194,21 +196,21 @@ public class Calculator {
      * prints polish sequence with spaces between elements
      */
     void printPolishSequence() {
-        for (int i = 0; i < polishSequence.size(); i++) {
-            if (polishSequence.get(i) == -1) {
+        for (Integer aPolishSequence : polishSequence) {
+            if (aPolishSequence == -1) {
                 System.out.print("+ ");
             }
-            if (polishSequence.get(i) == -2) {
+            if (aPolishSequence == -2) {
                 System.out.print("- ");
             }
-            if (polishSequence.get(i) == -3) {
+            if (aPolishSequence == -3) {
                 System.out.print("* ");
             }
-            if (polishSequence.get(i) == -4) {
+            if (aPolishSequence == -4) {
                 System.out.print("/ ");
             }
-            if (polishSequence.get(i) >= 0) {
-                System.out.print(polishSequence.get(i) + " ");
+            if (aPolishSequence >= 0) {
+                System.out.print(aPolishSequence + " ");
             }
         }
         System.out.println();
@@ -218,40 +220,28 @@ public class Calculator {
      * evaluates polish sequence using simple algorithm using Stack numbers
      *
      * @return evaluate result
+     * @throws Stack.EmptyStackException if pop is applied to an empty Stack
+     *                                   this exception might be thrown when input is incorrect
      */
-    int evaluatePolishSequence() {
-        for (int i = 0; i < polishSequence.size(); i++) {
-            int current = polishSequence.get(i);
+    int evaluatePolishSequence() throws Stack.EmptyStackException {
+        for (Integer aPolishSequence : polishSequence) {
+            int current = aPolishSequence;
+
             if (current >= 0) {
                 numbers.push(current);
             }
-
             if (current == -1) {
-                int rigthOperand = numbers.pop();
-                int leftOperand = numbers.pop();
-                int operationResult = leftOperand + rigthOperand;
-                numbers.push(operationResult);
+                numbers.push(numbers.pop() + numbers.pop());
             }
-
             if (current == -2) {
-                int rigthOperand = numbers.pop();
-                int leftOperand = numbers.pop();
-                int operationResult = leftOperand - rigthOperand;
-                numbers.push(operationResult);
+                numbers.push(-numbers.pop() + numbers.pop());
             }
-
             if (current == -3) {
-                int rigthOperand = numbers.pop();
-                int leftOperand = numbers.pop();
-                int operationResult = leftOperand * rigthOperand;
-                numbers.push(operationResult);
+                numbers.push(numbers.pop() * numbers.pop());
             }
-
             if (current == -4) {
-                int rigthOperand = numbers.pop();
-                int leftOperand = numbers.pop();
-                int operationResult = leftOperand / rigthOperand;
-                numbers.push(operationResult);
+                int right = numbers.pop();
+                numbers.push(numbers.pop() / right);
             }
         }
         return numbers.top();
@@ -261,10 +251,11 @@ public class Calculator {
      * method that creates polishSequence and evaluates it both
      *
      * @return evaluate result
+     * @throws Stack.EmptyStackException if pop is applied to an empty Stack
+     *                                   this exception might be thrown when input is incorrect
      */
-    public int evaluate() {
+    public int evaluate() throws Stack.EmptyStackException {
         createPolishSequence();
-        printPolishSequence();
         return evaluatePolishSequence();
     }
 

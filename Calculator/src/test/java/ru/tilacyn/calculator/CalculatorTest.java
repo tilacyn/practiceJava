@@ -18,17 +18,25 @@ public class CalculatorTest {
         calculator.printPolishSequence();
         Integer[] result1 = {3, 3, -3, 4, 90, 3, -2, -3, -1};
         assertArrayEquals(result1, calculator.getPolishSequence().toArray());
+
         calculator = new Calculator("(3+4-10)", operations, numbers);
         calculator.createPolishSequence();
         calculator.printPolishSequence();
         Integer[] result2 = {3, 4, -1, 10, -2};
         assertArrayEquals(result2, calculator.getPolishSequence().toArray());
+
+        calculator = new Calculator("(3+4-10+1)", operations, numbers);
+        calculator.createPolishSequence();
+        calculator.printPolishSequence();
+        Integer[] result3 = {3, 4, -1, 10, -2, 1, -1};
+        assertArrayEquals(result3, calculator.getPolishSequence().toArray());
+        assertEquals(calculator.evaluatePolishSequence(), -2);
     }
 
 
     @Test
     public void evaluatePolishSequence() throws Exception {
-        Stack<Integer> operations = new Stack<>(100000);
+        Stack<Character> operations = new Stack<>(100000);
         Stack<Integer> numbers = new Stack<>(100000);
         Calculator calculator = new Calculator("(3*3+4*(90-3))", operations, numbers);
         calculator.createPolishSequence();
