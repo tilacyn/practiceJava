@@ -1,8 +1,7 @@
 package ru.tilacyn.Tree;
 
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 import ru.tilacyn.MyTreeSet.MyTreeSet;
-import sun.reflect.generics.tree.Tree;
 
 import java.util.*;
 
@@ -13,10 +12,9 @@ import java.util.*;
  * @param <E> elements type
  */
 public class TreeSet<E> implements MyTreeSet<E> {
-    BinarySearchTree<E> bst = new BinarySearchTree<>();
+    private BinarySearchTree bst = new BinarySearchTree();
 
-
-    TreeSet() {
+    public TreeSet() {
     }
 
     /**
@@ -26,8 +24,8 @@ public class TreeSet<E> implements MyTreeSet<E> {
      *
      * @param comparator your own comparator
      */
-    TreeSet(@NotNull Comparator<E> comparator) {
-        bst = new BinarySearchTree<>(comparator);
+    public TreeSet(@NotNull Comparator<E> comparator) {
+        bst = new BinarySearchTree(comparator);
     }
 
     /**
@@ -35,7 +33,7 @@ public class TreeSet<E> implements MyTreeSet<E> {
      *
      * @param other source TreeSet
      */
-    TreeSet(@NotNull TreeSet other) {
+    public TreeSet(@NotNull TreeSet<E> other) {
         bst = other.bst;
     }
 
@@ -229,17 +227,15 @@ public class TreeSet<E> implements MyTreeSet<E> {
         bst.clear();
     }
 
-    public void print() {
+    void print() {
         bst.print();
     }
 
     /**
      * class that stores elements in an unbalanced binary search tree
      * has private access
-     *
-     * @param <E> elements type
      */
-    private class BinarySearchTree<E> implements Iterable<E> {
+    private class BinarySearchTree implements Iterable {
         private Node root = null;
         private Comparator<E> comparator;
         private int size = 0;
@@ -249,8 +245,6 @@ public class TreeSet<E> implements MyTreeSet<E> {
         }
 
         private BinarySearchTree(@NotNull Comparator<E> comparator) {
-            root = null;
-            size = 0;
             this.comparator = comparator;
         }
 
@@ -273,30 +267,38 @@ public class TreeSet<E> implements MyTreeSet<E> {
         }
 
         private E first() {
-            if (isEmpty()) return null;
+            if (isEmpty()) {
+                return null;
+            }
             return min(root);
         }
 
         private E last() {
-            if (isEmpty()) return null;
+            if (isEmpty()) {
+                return null;
+            }
             return max(root);
+        }
+
+        private E findLessParent(Node current) {
+            if (current.value.equals(first())) {
+                return null;
+            }
+            while (current.parent != null && comparator.compare((E) current.parent.value, (E) current.value) > 0) {
+                current = current.parent;
+            }
+            if (current.parent != null) {
+                return current.parent.value;
+            } else {
+                return first();
+            }
         }
 
         private E lower(E e) {
             Node current = findNode(e);
             System.out.println(current.value);
             if (comparator.compare(e, current.value) < 0 || (comparator.compare(e, current.value) == 0 & current.l == null)) {
-                if (current.value.equals(first())) {
-                    return null;
-                }
-                while (current.parent != null && comparator.compare((E) current.parent.value, (E) current.value) > 0) {
-                    current = current.parent;
-                }
-                if (current.parent != null) {
-                    return current.parent.value;
-                } else {
-                    return first();
-                }
+                return findLessParent(current);
             }
 
             if (comparator.compare(e, current.value) > 0) {
@@ -309,36 +311,30 @@ public class TreeSet<E> implements MyTreeSet<E> {
         private E floor(E e) {
             Node current = findNode(e);
             if (comparator.compare(e, current.value) < 0) {
-                if (current.value.equals(first())) {
-                    return null;
-                }
-                while (current.parent != null && comparator.compare((E) current.parent.value, (E) current.value) > 0) {
-                    current = current.parent;
-                }
-                if (current.parent != null) {
-                    return current.parent.value;
-                } else {
-                    return first();
-                }
+                return findLessParent(current);
             }
 
             return current.value;
         }
 
+        private E findGreaterParent(Node current) {
+            if (current.value.equals(last())) {
+                return null;
+            }
+            while (current.parent != null && comparator.compare((E) current.parent.value, (E) current.value) < 0) {
+                current = current.parent;
+            }
+            if (current.parent != null) {
+                return (E) current.parent.value;
+            } else {
+                return last();
+            }
+        }
+
         private E ceiling(E e) {
             Node current = findNode(e);
             if (comparator.compare(e, current.value) > 0) {
-                if (current.value.equals(last())) {
-                    return null;
-                }
-                while (current.parent != null && comparator.compare((E) current.parent.value, (E) current.value) < 0) {
-                    current = current.parent;
-                }
-                if (current.parent != null) {
-                    return (E) current.parent.value;
-                } else {
-                    return last();
-                }
+                return findGreaterParent(current);
             }
 
             if (comparator.compare(e, current.value) < 0) {
@@ -352,17 +348,7 @@ public class TreeSet<E> implements MyTreeSet<E> {
             Node current = findNode(e);
 
             if (comparator.compare(e, current.value) > 0 || (comparator.compare(e, current.value) == 0 & current.r == null)) {
-                if (current.value.equals(last())) {
-                    return null;
-                }
-                while (current.parent != null && comparator.compare((E) current.parent.value, (E) current.value) < 0) {
-                    current = current.parent;
-                }
-                if (current.parent != null) {
-                    return (E) current.parent.value;
-                } else {
-                    return last();
-                }
+                return findGreaterParent(current);
             }
 
             if (comparator.compare(e, current.value) < 0) {
@@ -428,6 +414,7 @@ public class TreeSet<E> implements MyTreeSet<E> {
             return false;
         }
 
+        @NotNull
         @Override
         public Iterator<E> iterator() {
             return new Iterator<E>() {
@@ -450,7 +437,7 @@ public class TreeSet<E> implements MyTreeSet<E> {
         private Object[] toArray() {
             Object[] result = new Object[this.size()];
             int i = 0;
-            for (E element : this) {
+            for (Object element : this) {
                 result[i++] = element;
             }
             return result;
@@ -461,7 +448,7 @@ public class TreeSet<E> implements MyTreeSet<E> {
                 a = (T[]) new Object[this.size()];
             }
             int i = 0;
-            for (E element : this) {
+            for (Object element : this) {
                 a[i++] = (T) element;
             }
             return a;
@@ -620,10 +607,10 @@ public class TreeSet<E> implements MyTreeSet<E> {
             boolean result = false;
             E[] toBeRemoved = (E[]) new Object[this.size];
             int count = 0;
-            for (E element : this) {
+            for (Object element : this) {
                 //System.out.println(element);
                 if (!c.contains(element)) {
-                    toBeRemoved[count] = element;
+                    toBeRemoved[count] = (E) element;
                     count++;
                     result = true;
                 }
@@ -638,7 +625,7 @@ public class TreeSet<E> implements MyTreeSet<E> {
         }
 
         private boolean removeAll(Collection<?> c) {
-            boolean result = true;
+            boolean result = false;
             for (Object element : c) {
                 result |= remove(element);
             }
