@@ -1,9 +1,6 @@
 package sp;
 
 import java.util.*;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -16,14 +13,14 @@ public final class FirstPartTasks {
     // Список названий альбомов
     public static List<String> allNames(Stream<Album> albums) {
         return albums
-                .map(a -> a.getName())
+                .map(Album::getName)
                 .collect(Collectors.toList());
     }
 
     // Список названий альбомов, отсортированный лексикографически по названию
     public static List<String> allNamesSorted(Stream<Album> albums) {
         return albums
-                .map(a -> a.getName())
+                .map(Album::getName)
                 .sorted(Comparator.naturalOrder())
                 .collect(Collectors.toList());
     }
@@ -32,7 +29,7 @@ public final class FirstPartTasks {
     public static List<String> allTracksSorted(Stream<Album> albums) {
         return albums
                 .flatMap(a -> a.getTracks().stream())
-                .map(t -> t.getName())
+                .map(Track::getName)
                 .sorted()
                 .collect(Collectors.toList());
     }
@@ -40,14 +37,9 @@ public final class FirstPartTasks {
     // Список альбомов, в которых есть хотя бы один трек с рейтингом более 95, отсортированный по названию
     public static List<Album> sortedFavorites(Stream<Album> s) {
         return s
-                .filter(album -> {
-                    for (Track track : album.getTracks()) {
-                        if (track.getRating() > 95) {
-                            return true;
-                        }
-                    }
-                    return false;
-                })
+                .filter(a -> a.getTracks().stream()
+                        .mapToInt(Track::getRating)
+                        .anyMatch(r -> r > 95))
                 .sorted(Comparator.comparing(Album::getName))
                 .collect(Collectors.toList());
     }
@@ -66,22 +58,24 @@ public final class FirstPartTasks {
 
     // Число повторяющихся альбомов в потоке
     public static long countAlbumDuplicates(Stream<Album> albums) {
-        List<Album> albumsList = albums.collect(Collectors.toList());
-        return albumsList.stream().count() - albumsList.stream().distinct().count();
+        return albums
+                .collect(Collectors.groupingBy(x -> x, Collectors.counting()))
+                .entrySet()
+                .stream()
+                .filter(x -> x.getValue() > 1)
+                .count();
     }
 
     // Альбом, в котором максимум рейтинга минимален
     // (если в альбоме нет ни одного трека, считать, что максимум рейтинга в нем --- 0)
     public static Optional<Album> minMaxRating(Stream<Album> albums) {
         return albums
-                .min(Comparator.comparing(a -> {
-                    return (a
-                            .getTracks()
-                            .stream()
-                            .max(Comparator.comparing(Track::getRating))
-                            .get()
-                            .getRating());
-                }));
+                .min(Comparator.comparing(a -> (a
+                        .getTracks()
+                        .stream()
+                        .max(Comparator.comparing(Track::getRating))
+                        .get()
+                        .getRating())));
     }
 
     // Список альбомов, отсортированный по убыванию среднего рейтинга его треков (0, если треков нет)
@@ -105,23 +99,8 @@ public final class FirstPartTasks {
     // Вернуть строку, состояющую из конкатенаций переданного массива, и окруженную строками "<", ">"
     // см. тесты
     public static String joinTo(String... strings) {
-
-        return "<" + Arrays.stream(strings)
-                .reduce("",
-                        (s, s2) -> {
-                            if (s == "") {
-                                return s2;
-                            } else {
-                                return s + ", " + s2;
-                            }
-                        },
-                        (s, s2) -> {
-                            if (s == "") {
-                                return s2;
-                            } else {
-                                return s + ", " + s2;
-                            }
-                        }) + ">";
+        return Arrays.stream(strings)
+                .collect(Collectors.joining(", ", "<", ">"));
     }
 
     // Вернуть поток из объектов класса 'clazz'

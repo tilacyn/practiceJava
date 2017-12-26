@@ -1,13 +1,9 @@
 package sp;
 
-import javafx.util.Pair;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,16 +31,15 @@ public final class SecondPartTasks {
     // Стрелок атакует мишень и каждый раз попадает в произвольную точку квадрата.
     // Надо промоделировать этот процесс с помощью класса java.util.Random и посчитать, какова вероятность попасть в мишень.
     public static double piDividedBy4() {
-        ArrayList<Pair<Double, Double>> inputRandomShots = new ArrayList<>();
         Random doubleGenerator = new Random();
-        for (int i = 0; i < 1000000; i++) {
-            inputRandomShots.add(new Pair<>(doubleGenerator.nextDouble() - 0.5, doubleGenerator.nextDouble() - 0.5));
-        }
 
-        return inputRandomShots
-                .stream()
-                .map(p -> {
-                    if (p.getValue() * p.getValue() + p.getKey() * p.getKey() <= 0.25) {
+        return Stream.generate(() -> doubleGenerator.nextDouble())
+                .limit(100000)
+                .map(x -> {
+                    double y = doubleGenerator.nextDouble();
+                    x -= 0.5;
+                    y -= 0.5;
+                    if (x * x + y * y < 0.25) {
                         return 1;
                     }
                     return 0;
@@ -62,7 +57,7 @@ public final class SecondPartTasks {
                 .max(Comparator.comparing(entry -> entry
                         .getValue()
                         .stream()
-                        .mapToInt(s -> s.length())
+                        .mapToInt(String::length)
                         .sum())).get().getKey();
 
     }
@@ -75,6 +70,6 @@ public final class SecondPartTasks {
                 .flatMap(map -> map
                         .entrySet()
                         .stream())
-                .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(entry -> entry.getValue())));
+                .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)));
     }
 }
