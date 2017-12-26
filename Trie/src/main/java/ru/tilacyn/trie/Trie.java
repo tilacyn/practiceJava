@@ -10,7 +10,6 @@ import java.io.*;
  * which is actually a set of strings on alphabet of english letters [a, b, ..., z]
  */
 public class Trie implements Serializable {
-
     /**
      * Private class which describes a vertex in our tree
      * each vertex has an array of its childrenNumber so that we could pass with O(1) time
@@ -65,9 +64,7 @@ public class Trie implements Serializable {
             cur = cur.next[getNum(s, pos)];
             pos++;
         }
-        if (pos == s.length() && cur.isTerminal) {
-            return true;
-        } else return false;
+        return pos == s.length() && cur.isTerminal;
     }
 
     /**
@@ -162,7 +159,7 @@ public class Trie implements Serializable {
      * @param out output stream
      * @throws IOException if problems with writing occurred
      */
-    void serialize(@NotNull OutputStream out) throws IOException {
+    public void serialize(@NotNull OutputStream out) throws IOException {
         ObjectOutputStream objectOut = new ObjectOutputStream(out);
         objectOut.writeObject(this);
         objectOut.flush();
@@ -177,7 +174,7 @@ public class Trie implements Serializable {
      * @throws IOException            if problems with reading occurred
      * @throws ClassNotFoundException if problems with reading occurred
      */
-    void deserialize(@NotNull InputStream in) throws IOException, ClassNotFoundException {
+    public void deserialize(@NotNull InputStream in) throws IOException, ClassNotFoundException {
         ObjectInputStream objectIn = new ObjectInputStream(in);
         Trie tmp = (Trie) objectIn.readObject();
         head = tmp.head;

@@ -144,6 +144,8 @@ public class TrieTest {
         trie.deserialize(fis);
         fis.close();
 
+        assertEquals(trie.size(), 0);
+
         file.delete();
     }
 
@@ -169,6 +171,14 @@ public class TrieTest {
         FileInputStream fis = new FileInputStream(file);
         trie.deserialize(fis);
         fis.close();
+
+        assertTrue(trie.contains("a"));
+        assertTrue(trie.contains("c"));
+        assertTrue(trie.contains("abc"));
+        assertTrue(trie.contains("bbbb"));
+        assertFalse(trie.contains("b"));
+
+        assertEquals(trie.size(), 4);
 
         file.delete();
     }
