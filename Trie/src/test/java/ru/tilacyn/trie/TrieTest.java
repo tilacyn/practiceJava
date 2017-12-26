@@ -2,10 +2,13 @@ package ru.tilacyn.trie;
 
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
 import static org.junit.Assert.*;
 
 public class TrieTest {
-
     @Test
     public void getNum() {
         Trie trie = new Trie();
@@ -17,50 +20,69 @@ public class TrieTest {
     public void contains() {
         Trie trie = new Trie();
         trie.add("kek");
-        assert trie.contains("kek");
+        assertTrue(trie.contains("kek"));
         trie.add("keks");
-        assert trie.contains("kek");
-        assert trie.contains("keks");
+        assertTrue(trie.contains("kek"));
+        assertTrue(trie.contains("keks"));
         trie.add("lol");
-        assert !trie.contains("lo");
+        assertTrue(!trie.contains("lo"));
     }
 
     @Test
     public void add() {
         Trie trie = new Trie();
         trie.add("johnlennon");
-        assert trie.add("john");
-        assert trie.add("johnny");
-        assert trie.add("johnnycash");
-        assert !trie.add("johnny");
+        assertTrue(trie.add("john"));
+        assertTrue(trie.add("johnny"));
+        assertTrue(trie.add("johnnycash"));
+        assertTrue(!trie.add("johnny"));
     }
 
     @Test
-    public void remove() {
+    public void removeEmpty() {
+        Trie trie = new Trie();
+        assertFalse(trie.remove("s"));
+    }
+
+    @Test
+    public void removeAll() {
         Trie trie = new Trie();
         trie.add("luntik");
         trie.add("peppapig");
         trie.add("orehus");
         trie.add("strawberry");
-        assert trie.contains("strawberry");
-        assert trie.remove("strawberry");
-        assert !trie.contains("strawberry");
-        trie.add("pineapple");
-        assert trie.contains("pineapple");
-        trie.add("pine");
-        assert trie.remove("pine");
-        assert !trie.contains("pine");
-        assert trie.contains("pineapple");
-        assert trie.remove("pineapple");
-        assert !trie.contains("pineapple");
-        assert !trie.remove("kek");
-        assert !trie.remove("pineapple");
-        assert trie.add("lizardking");
-        assert trie.add("lizard");
-        assert trie.remove("lizardking");
-        assert trie.remove("lizard");
-
+        assertTrue(trie.remove("luntik"));
+        assertTrue(trie.remove("peppapig"));
+        assertTrue(trie.remove("orehus"));
+        assertTrue(trie.remove("strawberry"));
+        assertEquals(trie.size(), 0);
     }
+
+    @Test
+    public void removeFromLinearTrie() {
+        Trie trie = new Trie();
+        trie.add("l");
+        trie.add("luntik");
+        trie.add("luntikikuzya");
+        trie.add("luntikikuzyaimila");
+        assertEquals(4, trie.size());
+        assertTrue(trie.remove("luntik"));
+        assertEquals(3, trie.size());
+        assertTrue(trie.remove("luntikikuzya"));
+        assertEquals(2, trie.size());
+    }
+
+
+    @Test
+    public void removeAndAdd() {
+        Trie trie = new Trie();
+        trie.add("l");
+        assertTrue(trie.remove("l"));
+        assertFalse(trie.remove("l"));
+        trie.add("l");
+        assertTrue(trie.remove("l"));
+    }
+
 
     @Test
     public void size() {
@@ -105,5 +127,59 @@ public class TrieTest {
         assertEquals(0, trie.howManyStartWithPrefix("letova"));
         assertEquals(0, trie.howManyStartWithPrefix("w"));
         assertEquals(3, trie.howManyStartWithPrefix("igore"));
+    }
+
+    @Test
+    public void serializeDeserializeEmpty() throws Exception {
+        File file = new File("serialized");
+        file.createNewFile();
+
+        Trie trie = new Trie();
+
+        FileOutputStream fos = new FileOutputStream(file);
+        trie.serialize(fos);
+        fos.close();
+
+        FileInputStream fis = new FileInputStream(file);
+        trie.deserialize(fis);
+        fis.close();
+
+        assertEquals(trie.size(), 0);
+
+        file.delete();
+    }
+
+
+    @Test
+    public void serializeDeserializeNotEmpty() throws Exception {
+        File file = new File("serialized");
+
+        file.createNewFile();
+
+        Trie trie = new Trie();
+        trie.add("a");
+        trie.add("b");
+        trie.add("c");
+        trie.add("abc");
+        trie.add("bbbb");
+        trie.remove("b");
+
+        FileOutputStream fos = new FileOutputStream(file);
+        trie.serialize(fos);
+        fos.close();
+
+        FileInputStream fis = new FileInputStream(file);
+        trie.deserialize(fis);
+        fis.close();
+
+        assertTrue(trie.contains("a"));
+        assertTrue(trie.contains("c"));
+        assertTrue(trie.contains("abc"));
+        assertTrue(trie.contains("bbbb"));
+        assertFalse(trie.contains("b"));
+
+        assertEquals(trie.size(), 4);
+
+        file.delete();
     }
 }
