@@ -29,7 +29,7 @@ public interface Function2<U, V, T> {
     /**
      * it binds second argument by y
      *
-     * @param y - second argument parameter
+     * @param y second argument parameter
      * @return a one-argument function
      */
     default Function1<U, T> bind2(V y) {
@@ -39,8 +39,8 @@ public interface Function2<U, V, T> {
     /**
      * it binds first argument by x
      *
-     * @param x - first argument parameter
-     * @return
+     * @param x first argument parameter
+     * @return new function : V -> T binding first argument
      */
     default Function1<V, T> bind1(U x) {
         return y -> apply(x, y);
@@ -49,8 +49,8 @@ public interface Function2<U, V, T> {
     /**
      * it works the same way as bind2
      *
-     * @param y
-     * @return
+     * @param y second argument parameter
+     * @return new function : U -> T binding second argument
      */
     default Function1<U, T> curry(V y) {
         return bind2(y);
