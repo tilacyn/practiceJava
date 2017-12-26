@@ -15,6 +15,11 @@ import java.util.HashMap;
  * if expression given is incorrect nothing is guaranteed, runtime error or wrong answer are both possible
  */
 public class Calculator {
+    private static final int PLUS = -1;
+    private static final int MINUS = -2;
+    private static final int MULTIPLY = -3;
+    private static final int DIVIDE = -4;
+
     /**
      * expression in infix notation of type string which is always initialized with a constructor argument
      */
@@ -86,10 +91,10 @@ public class Calculator {
         priority.put('-', 2);
         priority.put('*', 3);
         priority.put('/', 3);
-        code.put('+', -1);
-        code.put('-', -2);
-        code.put('*', -3);
-        code.put('/', -4);
+        code.put('+', PLUS);
+        code.put('-', MINUS);
+        code.put('*', MULTIPLY);
+        code.put('/', DIVIDE);
     }
 
     /**
@@ -230,16 +235,16 @@ public class Calculator {
             if (current >= 0) {
                 numbers.push(current);
             }
-            if (current == -1) {
+            if (current == PLUS) {
                 numbers.push(numbers.pop() + numbers.pop());
             }
-            if (current == -2) {
+            if (current == MINUS) {
                 numbers.push(-numbers.pop() + numbers.pop());
             }
-            if (current == -3) {
+            if (current == MULTIPLY) {
                 numbers.push(numbers.pop() * numbers.pop());
             }
-            if (current == -4) {
+            if (current == DIVIDE) {
                 int right = numbers.pop();
                 numbers.push(numbers.pop() / right);
             }
