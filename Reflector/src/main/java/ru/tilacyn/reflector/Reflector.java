@@ -1,6 +1,7 @@
 package ru.tilacyn.reflector;
 
 import org.jetbrains.annotations.NotNull;
+import ru.tilacyn.moduleLoader.ModuleLoader;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -49,15 +50,7 @@ public class Reflector {
      * @return result string
      */
     private String dollarToDot(@NotNull final String s) {
-        String result = "";
-        for (Character c : s.toCharArray()) {
-            if (c == '$') {
-                result += '.';
-            } else {
-                result += c;
-            }
-        }
-        return result;
+        return s.replaceAll("\\$", ".");
     }
 
     /**
@@ -71,36 +64,35 @@ public class Reflector {
     private String afterDot(@NotNull final String s) {
         int openBrace = s.indexOf('(');
         int i;
-        String name = "";
-        boolean hasDotOccured = false;
+        StringBuilder name = new StringBuilder();
+        boolean hasDotOccurred = false;
         for (i = openBrace - 1; i >= 0 && s.charAt(i) != ' '; i--) {
             if (s.charAt(i) == '.') {
-                hasDotOccured = true;
+                hasDotOccurred = true;
             }
-            if (!hasDotOccured) {
-                name = s.charAt(i) + name;
+            if (!hasDotOccurred) {
+                name.insert(0, s.charAt(i));
             }
         }
         return s.substring(0, i + 1) + name + s.substring(openBrace, s.length());
     }
 
     /**
-     * does the same as dollatToDot but for the field signature string
+     * does the same as dollarToDot but for the field signature string
      *
      * @param s source string: field signature
-     * @return
+     * @return new string of field signature with . instead of $
      */
     private String afterDotField(@NotNull final String s) {
-        int openBrace = s.indexOf('(');
         int i;
-        String name = "";
-        boolean hasDotOccured = false;
+        StringBuilder name = new StringBuilder();
+        boolean hasDotOccurred = false;
         for (i = s.length() - 1; i >= 0 && s.charAt(i) != ' '; i--) {
             if (s.charAt(i) == '.') {
-                hasDotOccured = true;
+                hasDotOccurred = true;
             }
-            if (!hasDotOccured) {
-                name = s.charAt(i) + name;
+            if (!hasDotOccurred) {
+                name.insert(0, s.charAt(i));
             }
         }
         return s.substring(0, i + 1) + name;
@@ -116,27 +108,27 @@ public class Reflector {
     private String makeSimpleArgTypes(@NotNull final String s) {
         int openBrace = s.indexOf('(');
 
-        String result = s.substring(0, openBrace + 1);
+        StringBuilder result = new StringBuilder(s.substring(0, openBrace + 1));
 
-        String currentType = "";
+        StringBuilder currentType = new StringBuilder();
 
         int argNumber = 0;
 
         if (s.charAt(openBrace + 1) != ')') {
             for (int i = openBrace + 1; i < s.length() && s.charAt(i - 1) != ')'; i++) {
                 if (s.charAt(i) == ',') {
-                    result += currentType + " arg" + ((Integer) argNumber).toString() + ", ";
-                    currentType = "";
+                    result.append(currentType).append(" arg").append(((Integer) argNumber).toString()).append(", ");
+                    currentType = new StringBuilder();
                     argNumber++;
                     continue;
                 }
 
                 if (s.charAt(i) == ')') {
-                    result += currentType + " arg" + ((Integer) argNumber).toString();
+                    result.append(currentType).append(" arg").append(((Integer) argNumber).toString());
                     break;
                 }
 
-                currentType += s.charAt(i);
+                currentType.append(s.charAt(i));
             }
         }
         return result + s.substring(s.indexOf(')'), s.length());
@@ -148,23 +140,19 @@ public class Reflector {
      * @param s source String: class signature
      * @return result class signature
      */
-    private String makeGlobalName(@NotNull final String s) {
-        int nameStart = s.indexOf("class ") + 6;
-        int i = nameStart;
-        for (; i < s.length() && s.charAt(i) != ' '; i++) {
-        }
-        return s.substring(0, nameStart) + "SomeClass" + s.substring(i, s.length());
+    private String makeGlobalName(@NotNull final String s, Class<?> someClass) {
+        return s.replaceAll(someClass.getSimpleName(), "SomeClass");
     }
 
     /**
      * @return current number of tabs to print
      */
     private String tabs() {
-        String tabs = "";
+        StringBuilder tabs = new StringBuilder();
         for (int i = 0; i < tabsNumber; i++) {
-            tabs += '\t';
+            tabs.append('\t');
         }
-        return tabs;
+        return tabs.toString();
     }
 
     //print methods
@@ -179,6 +167,7 @@ public class Reflector {
     private void printMethod(@NotNull final Method method) throws IOException {
         fileWriter.write(tabs());
         fileWriter.write(makeSimpleArgTypes(afterDot(dollarToDot(method.toGenericString()))));
+        //fileWriter.write(method.toGenericString());
 
         fileWriter.write(" {\n");
 
@@ -188,16 +177,16 @@ public class Reflector {
 
         Class returnType = method.getReturnType();
 
-        if (returnType.isPrimitive()) {
-            if (method.getReturnType().getName() == "void") {
-
-            } else if (method.getReturnType().getName() == "boolean") {
-                returnValue = " false";
+        if (!returnType.getName().equals("void")) {
+            if (returnType.isPrimitive()) {
+                if (returnType.getName().equals("boolean")) {
+                    returnValue = " false";
+                } else {
+                    returnValue = " 0";
+                }
             } else {
-                returnValue = " 0";
+                returnValue = " null";
             }
-        } else {
-            returnValue = " null";
         }
 
         fileWriter.write(tabs() + "return" + returnValue + ";\n");
@@ -236,12 +225,8 @@ public class Reflector {
 
         if (isGlobal) {
             String newSignature = dollarToDot(afterDot(constructor.toGenericString()));
-            int i;
-            for (i = newSignature.indexOf('('); i >= 0 && newSignature.charAt(i) != ' '; i--) {
-            }
-            fileWriter.write(newSignature.substring(0, i + 1) +
-                    "SomeClass" +
-                    newSignature.substring(newSignature.indexOf('('), newSignature.length()));
+            newSignature = newSignature.replaceAll(constructor.getDeclaringClass().getSimpleName(), "SomeClass");
+            fileWriter.write(newSignature);
         } else {
             fileWriter.write(dollarToDot(afterDot(constructor.toGenericString())));
         }
@@ -262,7 +247,7 @@ public class Reflector {
         fileWriter.write(tabs());
 
         if (isGlobal) {
-            fileWriter.write(makeGlobalName(dollarToDot(afterDotField(someClass.toGenericString()))) + "{\n\n");
+            fileWriter.write(makeGlobalName(dollarToDot(afterDotField(someClass.toGenericString())), someClass) + " {\n\n");
         } else {
             fileWriter.write(dollarToDot(afterDotField(someClass.toGenericString())) + "{\n\n");
         }
@@ -303,15 +288,11 @@ public class Reflector {
      */
     public void printStructure(@NotNull final Class<?> someClass) throws IOException, InterruptedException {
 
-        Runtime.getRuntime().exec("find . -maxdepth 1 -name \"*class\" | xargs rm").waitFor();
-
         File file = new File("SomeClass.java");
 
         file.createNewFile();
 
         fileWriter = new FileWriter(file, false);
-
-        //fileWriter.write(untilFirstComa(someClass.getPackage().toString()) + ";\n\n");
 
         fileWriter.write('\n');
 
@@ -323,6 +304,7 @@ public class Reflector {
 
         Runtime.getRuntime().exec("javac SomeClass.java").waitFor();
 
+        new ModuleLoader().getClazz();
     }
 
     //diff
@@ -350,15 +332,13 @@ public class Reflector {
      * @return hashed method of type String
      */
     private String hashMethod(@NotNull final Method method) {
-        System.out.println(method.getName() + " " + method.getReturnType() + " " + method.getGenericParameterTypes());
-
-        String result = method.getName() + " " + method.getReturnType() + " ";
+        StringBuilder result = new StringBuilder(method.getName() + " " + method.getReturnType() + " ");
 
         for (Type type : method.getParameterTypes()) {
-            result += type.toString() + " ";
+            result.append(type.toString()).append(" ");
         }
 
-        return result;
+        return result.toString();
     }
 
     /**
@@ -400,7 +380,7 @@ public class Reflector {
      * @throws IOException if problems with writing occurred
      */
     private boolean processDiffMethods(@NotNull final Class<?> first, @NotNull final Class<?> second) throws IOException {
-        HashSet<String> secondMethods = new HashSet();
+        HashSet<String> secondMethods = new HashSet<>();
         boolean result = true;
 
         for (Method method : second.getDeclaredMethods()) {
@@ -424,10 +404,10 @@ public class Reflector {
      * checks whether all the fields and methods of the first appear also in the second
      * and prints all the fields and methods from tre first that do not appear in the second by the way
      *
-     * @param first
-     * @param second
+     * @param first  class
+     * @param second class
      * @return true if all the fields and methods of the first class are in the second
-     * @throws IOException
+     * @throws IOException if problems with writing occurred
      */
     private boolean processDiffClasses(@NotNull final Class<?> first, @NotNull final Class<?> second) throws IOException {
         return processDiffFields(first, second) &

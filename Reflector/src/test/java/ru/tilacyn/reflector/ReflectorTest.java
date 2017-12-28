@@ -2,12 +2,13 @@ package ru.tilacyn.reflector;
 
 import org.junit.Test;
 
-import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+
+import ru.tilacyn.moduleLoader.*;
 
 import static org.junit.Assert.*;
 
@@ -67,55 +68,10 @@ public class ReflectorTest {
         Reflector reflector = new Reflector();
 
         reflector.printStructure(AM.class);
-        assertTrue(reflector.diffClasses(new ModuleLoader().clazz, AM.class));
+        assertTrue(reflector.diffClasses(new ModuleLoader().getClazz(), AM.class));
 
         reflector.printStructure(ReflectorTest.class);
-        assertTrue(reflector.diffClasses(new ModuleLoader().clazz, ReflectorTest.class));
-    }
-}
-
-
-class ModuleLoader extends ClassLoader {
-    byte b[] = fetchClassFromFS("SomeClass.class");
-    Class<?> clazz = new ClassLoader() {
-        public Class<?> getClass(String s, byte[] b, int l, int r) {
-            return super.defineClass(s, b, l, r);
-        }
-    }.getClass("SomeClass", b, 0, b.length);
-
-    ModuleLoader() throws IOException {
-    }
-
-    private byte[] fetchClassFromFS(String path) throws FileNotFoundException, IOException {
-        InputStream is = new FileInputStream(new File(path));
-
-        // Get the size of the file
-        long length = new File(path).length();
-
-        if (length > Integer.MAX_VALUE) {
-            // File is too large
-        }
-
-        // Create the byte array to hold the data
-        byte[] bytes = new byte[(int) length];
-
-        // Read in the bytes
-        int offset = 0;
-        int numRead = 0;
-        while (offset < bytes.length
-                && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-            offset += numRead;
-        }
-
-        // Ensure all the bytes have been read in
-        if (offset < bytes.length) {
-            throw new IOException("Could not completely read file " + path);
-        }
-
-        // Close the input stream and return bytes
-        is.close();
-        return bytes;
-
+        assertTrue(reflector.diffClasses(new ModuleLoader().getClazz(), ReflectorTest.class));
     }
 }
 
