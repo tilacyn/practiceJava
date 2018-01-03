@@ -15,12 +15,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ZipUtilConsole {
 
+    private static char sep = File.separatorChar;
+    private static String extracted = "src" + sep + "test" + sep + "resources" + sep + "Extracted";
+
     /**
      * writes data from input stream to output stream
      *
      * @param is input stream
      * @param os output stream
-     * @throws IOException
+     * @throws IOException if problems with reading/writing occurred
      */
     private static void writeFile(@NotNull InputStream is, @NotNull OutputStream os) throws IOException {
         byte[] buf = new byte[1024];
@@ -37,7 +40,7 @@ public class ZipUtilConsole {
      *
      * @param dir   directory
      * @param regex regular expression
-     * @throws IOException
+     * @throws IOException if problems with reading/writing occurred
      */
     private static void findZip(@NotNull File dir, @NotNull String regex) throws IOException {
         for (File file : dir.listFiles()) {
@@ -68,8 +71,8 @@ public class ZipUtilConsole {
      * extracts each file from the archive which matches regex
      *
      * @param zipFile archive
-     * @param regex
-     * @throws IOException
+     * @param regex   regular expression to match with
+     * @throws IOException if problems with extraction files occurred
      */
     private static void unZip(@NotNull ZipFile zipFile, @NotNull String regex) throws IOException {
         Enumeration entries = zipFile.entries();
@@ -77,7 +80,7 @@ public class ZipUtilConsole {
             ZipEntry zipEntry = (ZipEntry) entries.nextElement();
             if (!zipEntry.isDirectory() && checkWithRegex(regex, zipEntry.getName())) {
                 System.out.println(zipEntry.getName());
-                File file = new File("Extracted", zipEntry.getName());
+                File file = new File(extracted, zipEntry.getName());
                 new File(file.getParent()).mkdirs();
                 file.createNewFile();
                 writeFile(zipFile.getInputStream(zipEntry), new BufferedOutputStream(new FileOutputStream(file)));
@@ -97,7 +100,7 @@ public class ZipUtilConsole {
         if (args.length != 2) {
             System.out.println("Bad Input");
         } else {
-            new File("Extracted").mkdir();
+            new File(extracted).mkdir();
             String path = args[0];
             String regex = args[1];
             try {

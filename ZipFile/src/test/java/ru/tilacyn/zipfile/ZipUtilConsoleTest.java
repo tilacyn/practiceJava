@@ -10,6 +10,8 @@ import static org.junit.Assert.*;
 
 public class ZipUtilConsoleTest {
     private char sep = File.separatorChar;
+    private String pathToTestSrc = "src" + sep + "test" + sep + "resources" + sep;
+
 
 
     private static boolean checkWithRegex(String regex, String s) {
@@ -43,36 +45,40 @@ public class ZipUtilConsoleTest {
 
     @Test
     public void main() throws Exception {
-        new File("Extracted").mkdirs();
+        new File(pathToTestSrc + "Extracted").mkdirs();
 
         String[] arr = new String[2];
-        arr[0] = "Zipped";
+        arr[0] = pathToTestSrc + "Zipped";
         arr[1] = ".*\\.txt";
 
         ZipUtilConsole.main(arr);
 
-        checkDirectory(new File("Extracted"), ".*\\.txt");
+        checkDirectory(new File(pathToTestSrc + "Extracted"), ".*\\.txt");
 
         for (Integer i = 1; i <= 4; i++) {
-            assertTrue(new File("Extracted" + sep + "TestZip" + sep + i.toString() + sep + i.toString() + ".txt").exists());
+            assertTrue(new File(pathToTestSrc +
+                    "Extracted" + sep +
+                    "TestZip" + sep +
+                    i.toString() + sep +
+                    i.toString() + ".txt").exists());
         }
 
-        deleteDir(new File("Extracted"));
+        deleteDir(new File(pathToTestSrc + "Extracted"));
     }
 
     @Test
     public void mainEmptyArchive() throws Exception {
-        new File("Extracted").mkdirs();
+        new File(pathToTestSrc + "Extracted").mkdirs();
 
         String[] arr = new String[2];
-        arr[0] = "ZippedEmpty";
+        arr[0] = pathToTestSrc + "ZippedEmpty";
         arr[1] = ".*";
 
         ZipUtilConsole.main(arr);
 
-        assertEquals(new File("Extracted").listFiles().length, 0);
+        assertEquals(new File(pathToTestSrc + "Extracted").listFiles().length, 0);
 
-        deleteDir(new File("Extracted"));
+        deleteDir(new File(pathToTestSrc + "Extracted"));
     }
 
 }
