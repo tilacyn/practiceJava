@@ -2,7 +2,6 @@ package ru.tilacyn.serialization;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.util.Objects;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -21,19 +20,11 @@ public class Serialization {
     public static class BadFileFormatException extends Exception {
     }
 
-
     /**
-     * type constants
+     * possible field types
      */
-    private static final int STRING = 9;
-    private static final int INT = 1;
-    private static final int CHAR = 2;
-    private static final int BYTE = 3;
-    private static final int BOOLEAN = 4;
-    private static final int DOUBLE = 5;
-    private static final int FLOAT = 6;
-    private static final int LONG = 7;
-    private static final int SHORT = 8;
+    enum FieldType {INT, STRING, CHAR, BOOLEAN, DOUBLE, FLOAT, SHORT, LONG, BYTE}
+
 
     /**
      * these fields are re-initialized every time one of the two public functions is called
@@ -61,7 +52,7 @@ public class Serialization {
      * (indeed it is the order of iterator on the someClass.getDeclaredFields())
      * <p>
      * each field is stored this way
-     * <type><name length><name>
+     * <type length><type><name length><name>
      * <p>
      * if field type is String then data is stored this way right after type-name part:
      * <field data length><field data>
@@ -71,7 +62,7 @@ public class Serialization {
      *
      * @param o            object that should be written
      * @param outputStream output stream
-     * @throws IllegalAccessException if the some of the fields that should be serialized cannot be accessed
+     * @throws IllegalAccessException if some of the fields that should be serialized cannot be accessed
      * @throws IOException            if problems with writing occurred
      */
     public static void serialize(@NotNull Object o, @NotNull OutputStream outputStream) throws IllegalAccessException, IOException {
@@ -79,32 +70,34 @@ public class Serialization {
         os = new DataOutputStream(outputStream);
 
         for (Field f : c.getDeclaredFields()) {
-            if (Objects.equals(f.getType().getSimpleName(), "String")) {
-                serializeString(f, o);
-            }
-            if (Objects.equals(f.getType().getSimpleName(), "int")) {
-                serializeInt(f, o);
-            }
-            if (Objects.equals(f.getType().getSimpleName(), "char")) {
-                serializeChar(f, o);
-            }
-            if (Objects.equals(f.getType().getSimpleName(), "byte")) {
-                serializeByte(f, o);
-            }
-            if (Objects.equals(f.getType().getSimpleName(), "boolean")) {
-                serializeBoolean(f, o);
-            }
-            if (Objects.equals(f.getType().getSimpleName(), "double")) {
-                serializeDouble(f, o);
-            }
-            if (Objects.equals(f.getType().getSimpleName(), "float")) {
-                serializeFloat(f, o);
-            }
-            if (Objects.equals(f.getType().getSimpleName(), "long")) {
-                serializeLong(f, o);
-            }
-            if (Objects.equals(f.getType().getSimpleName(), "short")) {
-                serializeShort(f, o);
+            switch (f.getType().getSimpleName()) {
+                case "String":
+                    serializeString(f, o);
+                    break;
+                case "int":
+                    serializeInt(f, o);
+                    break;
+                case "boolean":
+                    serializeBoolean(f, o);
+                    break;
+                case "byte":
+                    serializeByte(f, o);
+                    break;
+                case "long":
+                    serializeLong(f, o);
+                    break;
+                case "char":
+                    serializeChar(f, o);
+                    break;
+                case "short":
+                    serializeShort(f, o);
+                    break;
+                case "double":
+                    serializeDouble(f, o);
+                    break;
+                case "float":
+                    serializeFloat(f, o);
+                    break;
             }
         }
     }
@@ -126,42 +119,61 @@ public class Serialization {
      */
     public static <T> T deserialize(@NotNull InputStream inputStream, @NotNull Class<T> c) throws IOException, IllegalAccessException, InstantiationException, NoSuchFieldException, BadFileFormatException {
         is = new DataInputStream(inputStream);
-        int type;
+        String type;
         T t = c.newInstance();
-        while ((type = is.read()) != -1) {
-            if (type == STRING) {
-                deserializeString(c, t);
+        while ((type = readFieldType()) != "eof") {
+            switch (type) {
+                case "STRING":
+                    deserializeString(c, t);
+                    break;
+                case "INT":
+                    deserializeInt(c, t);
+                    break;
+                case "CHAR":
+                    deserializeChar(c, t);
+                    break;
+                case "BOOLEAN":
+                    deserializeBoolean(c, t);
+                    break;
+                case "BYTE":
+                    deserializeByte(c, t);
+                    break;
+                case "SHORT":
+                    deserializeShort(c, t);
+                    break;
+                case "LONG":
+                    deserializeLong(c, t);
+                    break;
+                case "FLOAT":
+                    deserializeFloat(c, t);
+                    break;
+                case "DOUBLE":
+                    deserializeDouble(c, t);
+                    break;
+                default:
+                    throw new BadFileFormatException();
             }
-            if (type == INT) {
-                deserializeInt(c, t);
-            }
-            if (type == BYTE) {
-                deserializeByte(c, t);
-            }
-            if (type == DOUBLE) {
-                deserializeDouble(c, t);
-            }
-            if (type == FLOAT) {
-                deserializeFloat(c, t);
-            }
-            if (type == SHORT) {
-                deserializeShort(c, t);
-            }
-            if (type == LONG) {
-                deserializeLong(c, t);
-            }
-            if (type == BOOLEAN) {
-                deserializeBoolean(c, t);
-            }
-            if (type == CHAR) {
-                deserializeChar(c, t);
-            }
-            if (type > 9 || type <= 0) {
-                throw new BadFileFormatException();
-            }
-            System.out.println(type);
         }
         return t;
+    }
+
+    // FieldType processing
+
+    private static void writeFieldType(FieldType ft) throws IOException {
+        os.write(ft.toString().getBytes().length);
+        os.write(ft.toString().getBytes());
+    }
+
+    private static String readFieldType() throws IOException {
+        int n = is.read();
+        if (n == -1) {
+            return "eof";
+        }
+        byte[] ft = new byte[n];
+        for (int i = 0; i < n; i++) {
+            ft[i] = (byte) is.read();
+        }
+        return byteArrayToString(ft);
     }
 
     // Deserialize functions
@@ -235,7 +247,7 @@ public class Serialization {
     // Serialize functions
 
     private static void serializeString(@NotNull Field f, @NotNull Object o) throws IOException, IllegalAccessException {
-        os.write(STRING);
+        writeFieldType(FieldType.STRING);
         writeName(f);
         byte[] data = ((String) f.get(o)).getBytes();
         os.write(data.length);
@@ -243,49 +255,49 @@ public class Serialization {
     }
 
     private static void serializeInt(@NotNull Field f, @NotNull Object o) throws IOException, IllegalAccessException {
-        os.write(INT);
+        writeFieldType(FieldType.INT);
         writeName(f);
         os.writeInt((Integer) f.get(o));
     }
 
     private static void serializeChar(@NotNull Field f, @NotNull Object o) throws IOException, IllegalAccessException {
-        os.write(CHAR);
+        writeFieldType(FieldType.CHAR);
         writeName(f);
         os.writeChar((Character) f.get(o));
     }
 
     private static void serializeDouble(@NotNull Field f, @NotNull Object o) throws IOException, IllegalAccessException {
-        os.write(DOUBLE);
+        writeFieldType(FieldType.DOUBLE);
         writeName(f);
         os.writeDouble((Double) f.get(o));
     }
 
     private static void serializeByte(@NotNull Field f, @NotNull Object o) throws IOException, IllegalAccessException {
-        os.write(BYTE);
+        writeFieldType(FieldType.BYTE);
         writeName(f);
         os.writeByte((Byte) f.get(o));
     }
 
     private static void serializeBoolean(@NotNull Field f, @NotNull Object o) throws IOException, IllegalAccessException {
-        os.write(BOOLEAN);
+        writeFieldType(FieldType.BOOLEAN);
         writeName(f);
         os.writeBoolean((Boolean) f.get(o));
     }
 
     private static void serializeFloat(@NotNull Field f, @NotNull Object o) throws IOException, IllegalAccessException {
-        os.write(FLOAT);
+        writeFieldType(FieldType.FLOAT);
         writeName(f);
         os.writeFloat((Float) f.get(o));
     }
 
     private static void serializeLong(@NotNull Field f, @NotNull Object o) throws IOException, IllegalAccessException {
-        os.write(LONG);
+        writeFieldType(FieldType.LONG);
         writeName(f);
         os.writeLong((Long) f.get(o));
     }
 
     private static void serializeShort(@NotNull Field f, @NotNull Object o) throws IOException, IllegalAccessException {
-        os.write(SHORT);
+        writeFieldType(FieldType.SHORT);
         writeName(f);
         os.writeShort((Short) f.get(o));
     }
