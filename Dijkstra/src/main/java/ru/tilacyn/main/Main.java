@@ -17,11 +17,11 @@ import java.util.TreeMap;
  * i_1 j_1 len_1
  * ...
  * i_m j_m len_m
- *
+ * <p>
  * n, m - sizes of graph
  * w_i - "i" vertex weight
  * [i_k, j_k, len_k] - edge description
- *
+ * <p>
  * as a result Dijkstra evaluation is called
  * and attempts, distances and invasion order are printed
  * (for detailed information look at Dijkstra documentation)

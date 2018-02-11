@@ -13,7 +13,7 @@ public class GraphTest {
      * a nested class which is used both in GraphTest and DijkstraTest
      * it contains Graph parameters examples
      */
-    public static class Sources{
+    public static class Sources {
         public static <T> ArrayList<T> arrayToAL(T[] array) {
             ArrayList<T> al = new ArrayList<>();
             Collections.addAll(al, array);

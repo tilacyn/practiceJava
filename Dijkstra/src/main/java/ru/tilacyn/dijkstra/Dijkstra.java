@@ -18,7 +18,7 @@ import java.util.Arrays;
  * each time invaders want to conquer a new vertex and a battle result is random
  * but probabilty is equal to (INVADORS ARMY)/(INVADORS ARMY + DEFENDERS ARMY)
  * as a result the vertex is conquered and the process goes on
- *
+ * <p>
  * Dijkstra algorithm with difficulty O (n^2) is used for the solution
  */
 public class Dijkstra {
@@ -30,6 +30,7 @@ public class Dijkstra {
 
     /**
      * the only constructor with graph as a parameter
+     *
      * @param g graph
      */
     public Dijkstra(@NotNull Graph g) {
@@ -108,6 +109,7 @@ public class Dijkstra {
     /**
      * element of the big ArrayList with number "i" is a small list of attempts to conquer vertex
      * with number "i"
+     *
      * @return all the calculated attempts
      */
     public ArrayList<ArrayList<Boolean>> getAttempts() {

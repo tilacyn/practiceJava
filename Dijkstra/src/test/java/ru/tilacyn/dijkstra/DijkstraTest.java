@@ -39,8 +39,8 @@ public class DijkstraTest {
         assertArrayEquals(new int[]{0, 4, 4, 5, 6, 8, 9, 12}, dijkstra.getDistances());
         assertTrue(GraphTest.Sources.arrayToAL(new Integer[]{0, 1, 2, 3, 4, 5, 6, 7})
                 .equals(dijkstra.getInvasionOrder()) ||
-                        GraphTest.Sources.arrayToAL(new Integer[]{0, 2, 1, 3, 4, 5, 6, 7})
-                                .equals(dijkstra.getInvasionOrder()));
+                GraphTest.Sources.arrayToAL(new Integer[]{0, 2, 1, 3, 4, 5, 6, 7})
+                        .equals(dijkstra.getInvasionOrder()));
     }
 
     @Test
