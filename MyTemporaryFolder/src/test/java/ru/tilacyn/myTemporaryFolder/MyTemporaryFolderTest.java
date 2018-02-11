@@ -14,6 +14,11 @@ public class MyTemporaryFolderTest {
 
     private File testDirFile = new File(testDir);
 
+    {
+        testDirFile.mkdirs();
+    }
+
+
     @Test
     public void create() throws Exception {
         MyTemporaryFolder mtf = new MyTemporaryFolder(testDirFile);

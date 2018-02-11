@@ -41,19 +41,32 @@ public class MyTemporaryFolder extends ExternalResource {
      */
     public void create() throws IOException {
         tmpFolder = File.createTempFile("mtf", null, destinationFolder);
-        tmpFolder.delete();
-        tmpFolder.mkdir();
+        if (!tmpFolder.delete()) {
+            throw new IOException();
+        }
+        if (!tmpFolder.mkdir()) {
+            throw new IOException();
+        }
+
     }
 
     /**
+     * creates a new file with the specified file name
+     *
      * @param fileName specified file name
      * @return a new file with the specified name under the temporary folder
      */
     public File newFile(@NotNull String fileName) throws IOException {
         File newFile = new File(getRoot(), fileName);
-        newFile.mkdirs();
-        newFile.delete();
-        newFile.createNewFile();
+        if (!newFile.mkdirs()) {
+            throw new IOException();
+        }
+        if (!newFile.delete()) {
+            throw new IOException();
+        }
+        if (!newFile.createNewFile()) {
+            throw new IOException();
+        }
         return newFile;
     }
 
@@ -68,6 +81,8 @@ public class MyTemporaryFolder extends ExternalResource {
 
 
     /**
+     * returns temporary folder directory
+     *
      * @return a File of the temporary folder
      */
     public File getRoot() {
@@ -79,17 +94,23 @@ public class MyTemporaryFolder extends ExternalResource {
 
 
     /**
+     * creates a new folder under the temporary folder with the specified path
+     *
      * @param path folder name(path)
      * @return a new folder under the temporary folder with the specified folder name(path)
      */
-    public File newFolder(@NotNull String path) {
+    public File newFolder(@NotNull String path) throws IOException {
         File newFolder = new File(tmpFolder, path);
-        newFolder.mkdirs();
+        if (!newFolder.mkdirs()) {
+            throw new IOException();
+        }
         return newFolder;
     }
 
     /**
-     * @param paths path to folder
+     * creates a new folder with the specified path
+     *
+     * @param paths array of strings, each string is considered to be a directory under the previous one
      * @return a new folder under the temporary folder with the specified path
      */
     public File newFolder(@NotNull String... paths) {
@@ -102,13 +123,19 @@ public class MyTemporaryFolder extends ExternalResource {
     }
 
     /**
+     * creates a new folder with a random name under the temporary folder
+     *
      * @return a new folder with random name under the temporary folder
      * @throws IOException if problems with creating new file occurred
      */
     public File newFolder() throws IOException {
         File newFolder = File.createTempFile("mtf", null, tmpFolder);
-        newFolder.delete();
-        newFolder.mkdirs();
+        if (!newFolder.delete()) {
+            throw new IOException();
+        }
+        if (!newFolder.mkdirs()) {
+            throw new IOException();
+        }
         return newFolder;
     }
 
@@ -116,20 +143,22 @@ public class MyTemporaryFolder extends ExternalResource {
     /**
      * deletes recursively the temporary folder
      */
-    public void delete() {
+    public void delete() throws IOException {
         if (tmpFolder == null) {
             return;
         }
         deleteRecursively(tmpFolder);
     }
 
-    private void deleteRecursively(@NotNull File file) {
+    private void deleteRecursively(@NotNull File file) throws IOException {
         if (file.isDirectory()) {
             for (File child : file.listFiles()) {
                 deleteRecursively(child);
             }
         }
-        file.delete();
+        if (!file.delete()) {
+            throw new IOException();
+        }
     }
 
 }
