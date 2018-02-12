@@ -5,6 +5,7 @@ import org.junit.rules.ExternalResource;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -35,19 +36,31 @@ public class MyTemporaryFolder extends ExternalResource {
         destinationFolder = parentFolder;
     }
 
+    @Override
+    public void before() throws IOException {
+        if (destinationFolder != null) {
+            destinationFolder.delete();
+            destinationFolder.mkdirs();
+        }
+    }
+
+    @Override
+    public void after() {
+        if (destinationFolder != null) {
+            destinationFolder.delete();
+        }
+    }
+
 
     /**
      * creates a new Temporary Folder in the destination folder
      */
     public void create() throws IOException {
-        tmpFolder = File.createTempFile("mtf", null, destinationFolder);
-        if (!tmpFolder.delete()) {
-            throw new IOException();
+        if (destinationFolder == null) {
+            tmpFolder = Files.createTempDirectory("mtf").toFile();
+        } else {
+            tmpFolder = Files.createTempDirectory(destinationFolder.toPath(), "mtf").toFile();
         }
-        if (!tmpFolder.mkdir()) {
-            throw new IOException();
-        }
-
     }
 
     /**
@@ -59,13 +72,13 @@ public class MyTemporaryFolder extends ExternalResource {
     public File newFile(@NotNull String fileName) throws IOException {
         File newFile = new File(getRoot(), fileName);
         if (!newFile.mkdirs()) {
-            throw new IOException();
+            throw new IOException("Invalid path");
         }
         if (!newFile.delete()) {
-            throw new IOException();
+            throw new IOException("Deletion failed");
         }
         if (!newFile.createNewFile()) {
-            throw new IOException();
+            throw new IOException("File creation failed");
         }
         return newFile;
     }
@@ -89,7 +102,7 @@ public class MyTemporaryFolder extends ExternalResource {
         if (tmpFolder != null) {
             return tmpFolder;
         }
-        throw new IllegalStateException();
+        throw new IllegalStateException("Temporary folder has not been created");
     }
 
 
@@ -102,7 +115,7 @@ public class MyTemporaryFolder extends ExternalResource {
     public File newFolder(@NotNull String path) throws IOException {
         File newFolder = new File(tmpFolder, path);
         if (!newFolder.mkdirs()) {
-            throw new IOException();
+            throw new IOException("Invalid path(file might alredy exist)");
         }
         return newFolder;
     }
@@ -113,7 +126,7 @@ public class MyTemporaryFolder extends ExternalResource {
      * @param paths array of strings, each string is considered to be a directory under the previous one
      * @return a new folder under the temporary folder with the specified path
      */
-    public File newFolder(@NotNull String... paths) {
+    public File newFolder(@NotNull String... paths) throws Exception {
         File current = tmpFolder;
         for (String path : paths) {
             current = new File(current, path);
@@ -130,11 +143,10 @@ public class MyTemporaryFolder extends ExternalResource {
      */
     public File newFolder() throws IOException {
         File newFolder = File.createTempFile("mtf", null, tmpFolder);
-        if (!newFolder.delete()) {
-            throw new IOException();
-        }
+        // if problems occur exception will be thrown by the createTempFile call
+        newFolder.delete();
         if (!newFolder.mkdirs()) {
-            throw new IOException();
+            throw new IOException("Invalid path");
         }
         return newFolder;
     }
@@ -157,7 +169,7 @@ public class MyTemporaryFolder extends ExternalResource {
             }
         }
         if (!file.delete()) {
-            throw new IOException();
+            throw new IOException("Deletion failed");
         }
     }
 
