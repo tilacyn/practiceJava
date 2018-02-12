@@ -3,16 +3,19 @@ package ru.tilacyn.main;
 import ru.tilacyn.dijkstra.Dijkstra;
 import ru.tilacyn.graph.Graph;
 
-import java.util.Scanner;
-import java.util.ArrayList;
-import java.util.TreeMap;
+import java.io.*;
+import java.util.*;
 
 /**
  * a console util for calculating on graph
- * Graph should be given as a console input
- * this way:
+ * main method accepts String[] array that should contain exactly two strings
+ * first - name of input file
+ * second - name of output file
+ * if args.length differ then InputMismatchException is thrown
+ * <p>
+ * Information in the input file should be presented this way:
  * n m
- * k
+ * k // should be separated by dot eg 1.0 instead of 1,0
  * w_1 w_2 ... w_n
  * i_1 j_1 len_1
  * ...
@@ -27,16 +30,26 @@ import java.util.TreeMap;
  * (for detailed information look at Dijkstra documentation)
  */
 public class Main {
+    public static void main(String[] args) throws FileNotFoundException {
+        if (args.length != 2) {
+            throw new InputMismatchException("Bad Input\nTry again!\n<input filename> <output filename>\n");
+        }
+        String inputFileName = args[0];
+        String outputFileName = args[1];
 
-    public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
+        Scanner in = new Scanner(new File(inputFileName));
+        in.useLocale(Locale.US);
+        PrintWriter out = new PrintWriter(new File(outputFileName));
+
         int n = in.nextInt();
         int m = in.nextInt();
+
         ArrayList<ArrayList<Integer>> g = new ArrayList<>();
         TreeMap<Graph.Edge, Integer> edges = new TreeMap<>();
         int[] weight = new int[n];
 
-        in.nextInt();
+
+        double k = in.nextDouble();
         for (int i = 0; i < n; i++) {
             weight[i] = in.nextInt();
             g.add(new ArrayList<>());
@@ -55,32 +68,32 @@ public class Main {
         }
 
         Graph graph = new Graph(g, weight, edges);
-        Dijkstra dijkstra = new Dijkstra(graph);
+        Dijkstra dijkstra = new Dijkstra(graph, k);
         dijkstra.evaluate();
-
 
         ArrayList<ArrayList<Boolean>> attempts = dijkstra.getAttempts();
 
         for (int i = 0; i < n; i++) {
             for (Boolean attempt : attempts.get(i)) {
                 if (attempt) {
-                    System.out.print("y ");
+                    out.print("y ");
                 } else {
-                    System.out.print("n ");
+                    out.print("n ");
                 }
             }
-            System.out.println();
+            out.println();
         }
 
         for (int e : dijkstra.getInvasionOrder()) {
-            System.out.print(e + 1 + " ");
+            out.print(e + 1 + " ");
         }
-        System.out.println();
+        out.println();
 
         for (int d : dijkstra.getDistances()) {
-            System.out.print(d + " ");
+            out.print(d + " ");
         }
-        System.out.println();
+        out.println();
+        out.close();
 
     }
 }

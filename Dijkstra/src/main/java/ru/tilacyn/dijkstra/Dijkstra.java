@@ -16,7 +16,8 @@ import java.util.Arrays;
  * each of its used neighbours sends an army, and army proportions equal vertex weights
  * so defenders also have an army
  * each time invaders want to conquer a new vertex and a battle result is random
- * but probabilty is equal to (INVADORS ARMY)/(INVADORS ARMY + DEFENDERS ARMY)
+ * but probability is equal to k * (INVADORS ARMY)/(INVADORS ARMY + DEFENDERS ARMY)
+ * where k is the specified in constructor number of type double
  * as a result the vertex is conquered and the process goes on
  * <p>
  * Dijkstra algorithm with difficulty O (n^2) is used for the solution
@@ -27,13 +28,15 @@ public class Dijkstra {
     private int[] d;
     private boolean[] used;
     private ArrayList<Integer> invasionOrder;
+    private double k;
 
     /**
-     * the only constructor with graph as a parameter
+     * the only constructor with graph and double k as parameters
      *
      * @param g graph
+     * @param k double number which is multiplied to the real probability of battle result
      */
-    public Dijkstra(@NotNull Graph g) {
+    public Dijkstra(@NotNull Graph g, double k) {
         graph = g;
         d = new int[graph.n];
         Arrays.fill(d, Integer.MAX_VALUE);
@@ -41,6 +44,7 @@ public class Dijkstra {
         attempts = new ArrayList<>(graph.n);
         used = new boolean[graph.n];
         invasionOrder = new ArrayList<>();
+        this.k = k;
     }
 
     /**
@@ -75,6 +79,8 @@ public class Dijkstra {
 
 
         double probability = (double) invadors / (double) (invadors + defenders);
+        probability *= k;
+
         if (i == 0) {
             probability = 1.0;
         }
@@ -93,14 +99,15 @@ public class Dijkstra {
             if (!used[neighbour]) {
                 if (d[neighbour] > d[i] + graph.getDistance(i, neighbour)) {
                     d[neighbour] = d[i] + graph.getDistance(i, neighbour);
-                    //System.out.println("distance relax: " + i + " " + neighbour);
                 }
             }
         }
     }
 
     /**
-     * @return distances to the vertex with number 1
+     * returns distances to the vertex with number 1
+     *
+     * @return an int[] array of distances to the vertex with number 1
      */
     public int[] getDistances() {
         return d;
@@ -118,7 +125,9 @@ public class Dijkstra {
 
 
     /**
-     * @return an ArrayList, where vertex numbers are in the order of invasion
+     * returns vertex numbers in order of invasion
+     *
+     * @return an ArrayList of vertex numbers, which are in the order of invasion
      */
     public ArrayList<Integer> getInvasionOrder() {
         return invasionOrder;

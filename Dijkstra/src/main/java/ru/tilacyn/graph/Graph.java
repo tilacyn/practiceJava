@@ -15,34 +15,6 @@ import org.jetbrains.annotations.NotNull;
  * vertex numeration is [0, ..., n - 1]
  */
 public class Graph {
-    /**
-     * Nested class Edge implements interface comparable
-     * so that we could store them in TreeMap for example
-     * each Object contains two Integers: (to, from)
-     * constructor and method compareTo are trivial
-     */
-    public static class Edge implements Comparable<Edge> {
-        private int i;
-        private int j;
-
-        public Edge(int i, int j) {
-            this.i = i;
-            this.j = j;
-        }
-
-        @Override
-        public int compareTo(@NotNull Edge o) {
-            if (i == o.i) {
-                return Integer.compare(j, o.j);
-            } else {
-                if (i > o.i) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-            }
-        }
-    }
 
     /**
      * final fields
@@ -72,6 +44,8 @@ public class Graph {
     }
 
     /**
+     * returns neighbours of vertex with specified number
+     *
      * @param i number of vertex
      * @return all the neighbours of the vertice with number i
      */
@@ -80,9 +54,11 @@ public class Graph {
     }
 
     /**
+     * returns distance between vertices with specified numbers
+     *
      * @param i first vertex
      * @param j second vertex
-     * @return distance between this vertices or Integer.MAX_VALUE in case they are not neighbours
+     * @return distance between these vertices or Integer.MAX_VALUE in case they are not neighbours
      */
     public int getDistance(int i, int j) {
         if (edges.containsKey(new Edge(i, j))) {
@@ -92,6 +68,8 @@ public class Graph {
     }
 
     /**
+     * returns weight of the vertex with specified number
+     *
      * @param i number of vertex
      * @return weight of the vertex with this number
      */
@@ -99,4 +77,32 @@ public class Graph {
         return weight[i];
     }
 
+    /**
+     * Nested class Edge implements interface comparable
+     * so that we could store them in TreeMap for example
+     * each Object contains two Integers: (to, from)
+     * constructor and method compareTo are trivial
+     */
+    public static class Edge implements Comparable<Edge> {
+        private int i;
+        private int j;
+
+        public Edge(int i, int j) {
+            this.i = i;
+            this.j = j;
+        }
+
+        @Override
+        public int compareTo(@NotNull Edge o) {
+            if (i == o.i) {
+                return Integer.compare(j, o.j);
+            } else {
+                if (i > o.i) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            }
+        }
+    }
 }
