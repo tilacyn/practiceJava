@@ -5,6 +5,7 @@ import ru.tilacyn.graph.Graph;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 
 /**
@@ -16,7 +17,7 @@ import java.util.Arrays;
  * each of its used neighbours sends an army, and army proportions equal vertex weights
  * so defenders also have an army
  * each time invaders want to conquer a new vertex and a battle result is random
- * but probability is equal to k * (INVADORS ARMY)/(INVADORS ARMY + DEFENDERS ARMY)
+ * but probability is equal to k * (INVADERS ARMY)/(INVADERS ARMY + DEFENDERS ARMY)
  * where k is the specified in constructor number of type double
  * as a result the vertex is conquered and the process goes on
  * <p>
@@ -29,6 +30,7 @@ public class Dijkstra {
     private boolean[] used;
     private ArrayList<Integer> invasionOrder;
     private double k;
+    private int[] from;
 
     /**
      * the only constructor with graph and double k as parameters
@@ -45,6 +47,7 @@ public class Dijkstra {
         used = new boolean[graph.n];
         invasionOrder = new ArrayList<>();
         this.k = k;
+        from = new int[graph.n];
     }
 
     /**
@@ -69,16 +72,16 @@ public class Dijkstra {
         used[i] = true;
         invasionOrder.add(i);
 
-        int invadors = 0;
+        int invaders = 0;
         int defenders = graph.getWeight(i);
         for (int neighbour : graph.getNeighbours(i)) {
             if (used[neighbour]) {
-                invadors += graph.getWeight(neighbour);
+                invaders += graph.getWeight(neighbour);
             }
         }
 
 
-        double probability = (double) invadors / (double) (invadors + defenders);
+        double probability = (double) invaders / (double) (invaders + defenders);
         probability *= k;
 
         if (i == 0) {
@@ -99,6 +102,7 @@ public class Dijkstra {
             if (!used[neighbour]) {
                 if (d[neighbour] > d[i] + graph.getDistance(i, neighbour)) {
                     d[neighbour] = d[i] + graph.getDistance(i, neighbour);
+                    from[neighbour] = i;
                 }
             }
         }
@@ -131,5 +135,24 @@ public class Dijkstra {
      */
     public ArrayList<Integer> getInvasionOrder() {
         return invasionOrder;
+    }
+
+
+    /**
+     * returns full path from the vertex number 0 to the vertex number i
+     * path is guaranteed to be the shortest in the graph
+     *
+     * @param i specified vertex number
+     * @return an ArrayList<Integer> of vertex numbers in the path
+     */
+    public ArrayList<Integer> getPath(int i) {
+        ArrayList<Integer> path = new ArrayList<>();
+        path.add(i);
+        while (i != 0) {
+            path.add(from[i]);
+            i = from[i];
+        }
+        Collections.reverse(path);
+        return path;
     }
 }

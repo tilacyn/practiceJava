@@ -26,13 +26,14 @@ import java.util.*;
  * [i_k, j_k, len_k] - edge description
  * <p>
  * as a result Dijkstra evaluation is called
- * and attempts, distances and invasion order are printed
+ * and attempts, distances, invasion order and paths are printed
  * (for detailed information look at Dijkstra documentation)
  */
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         if (args.length != 2) {
-            throw new InputMismatchException("Bad Input\nTry again!\n<input filename> <output filename>\n");
+            System.out.println("Bad Input\nTry again!\n<input filename> <output filename>\n");
+            return;
         }
         String inputFileName = args[0];
         String outputFileName = args[1];
@@ -73,6 +74,8 @@ public class Main {
 
         ArrayList<ArrayList<Boolean>> attempts = dijkstra.getAttempts();
 
+        out.println("Attempts:");
+
         for (int i = 0; i < n; i++) {
             for (Boolean attempt : attempts.get(i)) {
                 if (attempt) {
@@ -84,15 +87,29 @@ public class Main {
             out.println();
         }
 
+        out.println("Invasion order:");
+
         for (int e : dijkstra.getInvasionOrder()) {
             out.print(e + 1 + " ");
         }
         out.println();
 
+        out.println("Distances:");
+
         for (int d : dijkstra.getDistances()) {
             out.print(d + " ");
         }
         out.println();
+
+        out.println("Paths:");
+
+        for (int i = 0; i < n; i++) {
+            for (int v : dijkstra.getPath(i)) {
+                out.print(v + 1 + " ");
+            }
+            out.println();
+        }
+
         out.close();
         in.close();
     }

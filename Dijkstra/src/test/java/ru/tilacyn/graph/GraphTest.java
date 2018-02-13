@@ -13,7 +13,7 @@ public class GraphTest {
      * a nested class which is used both in GraphTest and DijkstraTest
      * it contains Graph parameters examples
      */
-    public static class Sources {
+    static class Sources {
 
         static final ArrayList<ArrayList<Integer>> g1 = new ArrayList<>();
         static final int[] w1 = new int[]{1, 1, 1, 1};
