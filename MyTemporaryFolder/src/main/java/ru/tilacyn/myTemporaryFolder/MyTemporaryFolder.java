@@ -36,14 +36,20 @@ public class MyTemporaryFolder extends ExternalResource {
         destinationFolder = parentFolder;
     }
 
+    /**
+     * before each test destination folder is created
+     */
     @Override
-    public void before() throws IOException {
+    public void before() {
         if (destinationFolder != null) {
             destinationFolder.delete();
             destinationFolder.mkdirs();
         }
     }
 
+    /**
+     * after each test destination folder is deleted
+     */
     @Override
     public void after() {
         if (destinationFolder != null) {
@@ -54,6 +60,8 @@ public class MyTemporaryFolder extends ExternalResource {
 
     /**
      * creates a new Temporary Folder in the destination folder
+     *
+     * @throws IOException if problems with directory creation occur
      */
     public void create() throws IOException {
         if (destinationFolder == null) {
@@ -65,18 +73,21 @@ public class MyTemporaryFolder extends ExternalResource {
 
     /**
      * creates a new file with the specified file name
+     * if file with this name already exists then it is deleted
+     * new empty file is created
      *
      * @param fileName specified file name
      * @return a new file with the specified name under the temporary folder
+     * @throws IOException if problems with new file creation occur
      */
     public File newFile(@NotNull String fileName) throws IOException {
-        File newFile = new File(getRoot(), fileName);
-        if (!newFile.mkdirs()) {
-            throw new IOException("Invalid path");
-        }
-        if (!newFile.delete()) {
-            throw new IOException("Deletion failed");
-        }
+        File newFile = new
+                File(getRoot(), fileName);
+
+        // no use of checking method results
+
+        newFile.mkdirs();
+        newFile.delete();
         if (!newFile.createNewFile()) {
             throw new IOException("File creation failed");
         }
@@ -87,6 +98,7 @@ public class MyTemporaryFolder extends ExternalResource {
      * creates a new file with a random name under the temporary folder
      *
      * @return a new File
+     * @throws IOException if problems with file creation occur
      */
     public File newFile() throws IOException {
         return File.createTempFile("mtf", null, getRoot());
@@ -111,11 +123,12 @@ public class MyTemporaryFolder extends ExternalResource {
      *
      * @param path folder name(path)
      * @return a new folder under the temporary folder with the specified folder name(path)
+     * @throws IOException if this folder already exists or some problems with creation occur
      */
     public File newFolder(@NotNull String path) throws IOException {
         File newFolder = new File(tmpFolder, path);
         if (!newFolder.mkdirs()) {
-            throw new IOException("Invalid path(file might alredy exist)");
+            throw new IOException("Invalid path(file might already exist)");
         }
         return newFolder;
     }
@@ -126,10 +139,13 @@ public class MyTemporaryFolder extends ExternalResource {
      * @param paths array of strings, each string is considered to be a directory under the previous one
      * @return a new folder under the temporary folder with the specified path
      */
-    public File newFolder(@NotNull String... paths) throws Exception {
+    public File newFolder(@NotNull String... paths) {
         File current = tmpFolder;
         for (String path : paths) {
             current = new File(current, path);
+
+            // directories might exist, so the result is left unchecked
+
             current.mkdirs();
         }
         return current;
@@ -139,21 +155,24 @@ public class MyTemporaryFolder extends ExternalResource {
      * creates a new folder with a random name under the temporary folder
      *
      * @return a new folder with random name under the temporary folder
-     * @throws IOException if problems with creating new file occurred
+     * @throws IOException if problems with creating new file occur
      */
     public File newFolder() throws IOException {
         File newFolder = File.createTempFile("mtf", null, tmpFolder);
-        // if problems occur exception will be thrown by the createTempFile call
+
+        // if problems occur then exception will be thrown by the createTempFile call
+        // no use of throwing exceptions by checking delete or mkdirs result
+
         newFolder.delete();
-        if (!newFolder.mkdirs()) {
-            throw new IOException("Invalid path");
-        }
+        newFolder.mkdirs();
         return newFolder;
     }
 
 
     /**
      * deletes recursively the temporary folder
+     *
+     * @throws IOException if deletion fails
      */
     public void delete() throws IOException {
         if (tmpFolder == null) {
