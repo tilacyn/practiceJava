@@ -94,6 +94,6 @@ public class Main {
         }
         out.println();
         out.close();
-
+        in.close();
     }
 }
