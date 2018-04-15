@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class ThreadPoolImplTest {
     @Test
     public void test1() throws LightExecutionException {
-        ThreadPoolmpl<Integer> pool = new ThreadPoolmpl<>(5);
+        ThreadPoolImpl<Integer> pool = new ThreadPoolImpl<>(5);
         LightFuture<Integer> task = pool.addTask(() -> 2 * 2);
         assertEquals(task.get(), (Integer) 4);
         LightFuture<Integer> task1 = pool.addTask(() -> 2 * 3);
@@ -19,12 +19,12 @@ public class ThreadPoolImplTest {
         assertEquals(task1.get(), (Integer) 6);
         assertEquals(task2.get(), (Integer) 7);
         assertEquals(task3.get(), (Integer) 8);
-        pool.shutdown();
+        //pool.shutdown();
     }
 
     @Test
     public void manyTasks() throws LightExecutionException {
-        ThreadPoolmpl<String> pool = new ThreadPoolmpl<>(5);
+        ThreadPoolImpl<String> pool = new ThreadPoolImpl<>(5);
         LightFuture<String> task1 = pool.addTask(new Integer(234567)::toString);
         LightFuture<String> task2 = pool.addTask(() -> "hello");
         LightFuture<String> task3 = pool.addTask(this::toString);
@@ -45,12 +45,12 @@ public class ThreadPoolImplTest {
         assertEquals(task5.get(), "5");
         assertEquals(task6.get(), "6");
         assertEquals(task7.get(), "7");
-        pool.shutdown();
+        //pool.shutdown();
     }
 
     @Test
     public void thenApplyInLoop() throws LightExecutionException {
-        ThreadPoolmpl<Integer> pool = new ThreadPoolmpl<>(10);
+        ThreadPoolImpl<Integer> pool = new ThreadPoolImpl<>(10);
 
         ArrayList<Integer> results = new ArrayList<>();
 
@@ -67,12 +67,12 @@ public class ThreadPoolImplTest {
             sum += i;
             assertEquals(results.get(i), sum);
         }
-        pool.shutdown();
+        //pool.shutdown();
     }
 
     @Test
     public void thenApplyToOneResult() throws LightExecutionException {
-        ThreadPoolmpl<Integer> pool = new ThreadPoolmpl<>(10);
+        ThreadPoolImpl<Integer> pool = new ThreadPoolImpl<>(11);
         LightFuture<Integer> task = pool.addTask(() -> 2);
 
         ArrayList<LightFuture<Integer>> tasks = new ArrayList<>();
@@ -85,18 +85,18 @@ public class ThreadPoolImplTest {
         for (Integer i = 0; i < 10; i++) {
             assertEquals((int) tasks.get(i).get(), 2 * i);
         }
-        pool.shutdown();
+        //pool.shutdown();
     }
 
     @Test(expected = LightExecutionException.class)
     public void exception() throws LightExecutionException {
-        ThreadPoolmpl<Integer> pool = new ThreadPoolmpl<>(1);
+        ThreadPoolImpl<Integer> pool = new ThreadPoolImpl<>(1);
         LightFuture<Integer> task = pool.addTask(() -> {
             throw new IllegalStateException();
         });
 
         task.get();
-        pool.shutdown();
+        //pool.shutdown();
     }
 
 }
