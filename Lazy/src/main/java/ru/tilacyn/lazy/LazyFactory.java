@@ -40,12 +40,15 @@ public class LazyFactory<T> {
      */
     public static <T> Lazy<T> createComplexLazy(@NotNull Supplier<T> supplier) {
         return new Lazy<T>() {
-            private T result = null;
-            private boolean evaluated = false;
+            private volatile T result = null;
+            private volatile boolean evaluated = false;
 
 
             @Override
             public T get() {
+                if (evaluated) {
+                    return result;
+                }
                 synchronized (this) {
                     if (!evaluated) {
                         result = supplier.get();
