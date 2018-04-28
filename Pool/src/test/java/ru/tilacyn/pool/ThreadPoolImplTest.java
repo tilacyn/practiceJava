@@ -99,4 +99,33 @@ public class ThreadPoolImplTest {
         //pool.shutdown();
     }
 
+    @Test
+    public void testShutdownInfinite() throws InterruptedException {
+        ThreadPoolImpl<Integer> pool = new ThreadPoolImpl<>(5);
+        LightFuture<Integer> task = pool.addTask(() -> {
+            while (true) {
+            }
+        });
+        Thread.sleep(50);
+        pool.shutdown();
+
+        assertFalse(task.isReady());
+    }
+
+    @Test
+    public void testShutdownFinite() throws InterruptedException {
+        ThreadPoolImpl<Integer> pool = new ThreadPoolImpl<>(5);
+        LightFuture<Integer> task1 = pool.addTask(() -> 4);
+        LightFuture<Integer> task2 = pool.addTask(() -> 4);
+        LightFuture<Integer> task3 = pool.addTask(() -> 4);
+        LightFuture<Integer> task4 = pool.addTask(() -> 4);
+        Thread.sleep(50);
+        pool.shutdown();
+
+        assertTrue(task1.isReady());
+        assertTrue(task2.isReady());
+        assertTrue(task3.isReady());
+        assertTrue(task4.isReady());
+    }
+
 }
