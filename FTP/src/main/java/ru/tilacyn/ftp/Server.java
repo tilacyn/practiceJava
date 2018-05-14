@@ -28,13 +28,14 @@ public class Server {
      * starts the server so that it could process requests
      */
     public void start() {
+        System.out.println(serverSocket.getLocalPort());
         while (true) {
             try {
                 Socket s = serverSocket.accept();
                 Thread thread = new Thread(() -> {
                     try {
                         processRequest(s);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 });
@@ -71,13 +72,20 @@ public class Server {
         os.write(buffer);
     }
 
-    private void processList(@NotNull DataInputStream is, @NotNull DataOutputStream os) throws IOException {
+    private void processList(@NotNull DataInputStream is, @NotNull DataOutputStream os) throws Exception {
+        System.out.println("In processList");
+
+
         char c;
         StringBuilder path = new StringBuilder();
         while ((int) (c = is.readChar()) != -1) {
             path.append(c);
         }
         File dir = new File(path.toString());
+
+        if (!dir.exists()) {
+            throw new Exception("This file does not exist");
+        }
 
         if (!dir.isDirectory()) {
             os.writeInt(0);
@@ -103,9 +111,11 @@ public class Server {
                 os.writeBoolean(false);
             }
         }
+        System.out.println("End of processList");
+
     }
 
-    private void processRequest(Socket s) throws IOException {
+    private void processRequest(Socket s) throws Exception {
         try (DataOutputStream os = new DataOutputStream(s.getOutputStream());
              DataInputStream is = new DataInputStream(s.getInputStream())) {
             while (s.isConnected()) {
@@ -135,7 +145,7 @@ public class Server {
 
         Server server;
         try {
-            server = new Server(Integer.parseInt(args[1]));
+            server = new Server(Integer.parseInt(args[0]));
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Could not create client " + e.getMessage());

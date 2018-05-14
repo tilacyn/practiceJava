@@ -42,7 +42,7 @@ public class ClientTest {
         when(socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
 
         Client client = new Client(socket);
-        assertEquals(client.get("1"), new Client.ContentFile("file", content));
+        assertEquals(client.get("file"), new Client.ContentFile("file", content));
     }
 
     private InputStream getInputStream(List<Client.File> files) throws IOException {
